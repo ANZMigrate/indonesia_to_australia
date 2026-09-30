@@ -77,6 +77,10 @@
     if (visualCard) {
       window.gsap.to(visualCard, { y: -9, duration: 2.8, repeat: -1, yoyo: true, ease: 'sine.inOut' });
     }
+    const contactOrbit = document.querySelector('.contact-cta-orbit');
+    if (contactOrbit) {
+      window.gsap.to(contactOrbit, { rotation: 360, duration: 20, repeat: -1, ease: 'none' });
+    }
   }
 
   if ('IntersectionObserver' in window && revealItems.length > 0) {
