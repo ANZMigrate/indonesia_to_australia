@@ -317,3 +317,9 @@ p { color: var(--muted); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* NIV page adjustments */
+.route-card h3 { max-width: 30rem; font-size: clamp(1.3rem, 2.1vw, 1.75rem); }
+.route-card p strong { color: inherit; font-weight: 650; }
+.route-card--study p strong { color: #fff; }
+.inline-cta .text-link { flex: 0 0 auto; white-space: nowrap; }
