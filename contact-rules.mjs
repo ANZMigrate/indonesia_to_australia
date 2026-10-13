@@ -1,4 +1,4 @@
-/* ANZ Migrate contact rules — shared by client and server.
+/* Conditional enquiry rules shared by client and server.
  * Mirrors the enabled conditions supplied in contact-schema.json.
  */
 const normalized = (value) => {

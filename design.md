@@ -1,81 +1,33 @@
-# Indonesia to Australia design system
+# Indonesia to Australia — Design and integration notes
 
-## Direction
+## Visual design
 
-A document-led editorial system that gives qualification and occupation evidence a clear visual priority.
+Modern editorial layouts, responsive content cards, deliberate spacing, and accessible contrast. The primary font is Google Sans Flex with system sans-serif fallbacks. The homepage retains a dark hero and restrained geometry built entirely with CSS. GSAP is a progressive enhancement, honors reduced-motion preferences, and never controls the availability or validity of the questionnaire.
 
-## Audience and tone
+## Contact questionnaire
 
-The primary audience is Indonesian professionals, graduates and students. The voice is precise, calm and document-led. Explain the evidence and sequence rather than promising an outcome. Avoid vague conversion language and avoid claims that a visitor qualifies.
+The `#contact-cta` section contains a conditional enquiry form. The public `contact-schema.json` contains **46 questions** and **23 conditional rules** adapted from the supplied form definition. All four document-upload fields and their four dependent rules have been fully removed.
 
-## Type
+`contact-form.mjs` renders questions, option values, and conditional visibility using `contact-rules.mjs`. Hidden answers are cleared. The server repeats validation and only sends allowed answers. Required questions are checked before submission. No document or file-upload elements exist in the form.
 
-- Primary family: Google Sans Flex, Arial, sans-serif.
-- Body size: 16px base with 1.65 line height.
-- Reading copy: approximately 17px to 19px where a longer paragraph needs more comfort.
-- Hero heading: responsive, capped around 88px on wide desktop, with a more restrained mobile scale.
-- Section headings: responsive, capped around 57px.
-- Use weight 680 to 760 for hierarchy. Reserve the strongest weight for H1, H2 and visa subclass numbers.
+## Receiving service
 
-## Layout
+The contact form is deliberately unaffiliated with any external migration brand. The API does not contain a hardcoded receiving service or send data to a previously linked provider.
 
-- Maximum content width: 1440px.
-- Page gutters use a responsive CSS variable.
-- Hero layout uses an asymmetric two-column editorial composition on desktop.
-- Content pages use page heroes, comparison rows, evidence cards, numbered process steps, FAQ details and a dark source panel.
-- Keep long text below approximately 780px for comfortable reading.
-- Mobile layout becomes one column with touch-sized controls and no horizontal scrolling.
+To enable online submissions, configure the following Vercel environment variables:
 
-## Colour and surfaces
+- `CONTACT_SUBMIT_ENDPOINT` — HTTPS URL of your own authorized enquiry receiving service.
+- `CONTACT_SUBMIT_HOST` — exact hostname of that same receiving service (allowlist).
+- `CONTACT_SUBMIT_FORMAT` — optional `payload` (default) or `convert`.
 
-Red clay accent on warm ivory, with rounded editorial cards.
+Without an independently configured endpoint, the questionnaire remains browsable but **Send details** is disabled. No receipt is claimed and no visitor data is sent. The receiving service must respond with a confirmation such as `{"success":true}` or a document ID. Confirm that the destination's request shape matches the configured format before enabling live submissions.
 
-The design uses warm or cool paper-like surfaces, ink text, muted secondary text, fine borders and one restrained accent. Colour is never the only signal for a visa type. Dark sections are used for source links and high attention transitions.
+Do not configure a third-party endpoint without permission to collect and process enquiries there. Keep privacy notices current when configuring a receiver. Do not add attachment handling without a separate security and data-retention review.
 
-## Components
+## Quality checks
 
-- Sticky text-only header with keyboard accessible mobile menu.
-- Hero visual made from CSS geometry, not stock photography or a logo.
-- Two route cards for skilled migration and study.
-- Six visa cards or comparison rows for subclasses 189, 190, 491, 482, 186 and 494.
-- Numbered process list for SkillSelect and Student visa preparation.
-- Evidence cards for skills assessment and Genuine Student topics.
-- Native FAQ details with one open item at a time.
-- Footer disclaimer and privacy page. There is no contact form in this version.
-
-## Motion
-
-The local script uses GSAP for header entrance, hero entrance, card reveal and a restrained floating visual card. Motion is progressive enhancement. If GSAP does not load or reduced motion is enabled, all content remains visible and usable.
-
-## Further development
-
-- Add a real production hostname to the XML sitemap before launch.
-- Recheck official Home Affairs and CRICOS URLs when content changes.
-- If a form is added later, define the endpoint, privacy notice and success or error states before adding fields.
-- Keep country-specific copy genuinely rewritten. Do not make doorway pages by changing only the country name.
-
-## 2026 editorial refresh
-
-- Mobbin inspiration: [Oyster](https://mobbin.com/sites/sections/67fdec3d-e3a1-49f7-9c34-9923acb1eba5) and [Complex Law](https://mobbin.com/sites/sections/d6b4e853-443b-4754-b6a3-626b51a82d0c); no external design assets copied.
-- Midnight editorial hero, luminous geometric visa visualization, calm white information cards, refined mobile navigation and coherent inner-page treatment.
-- Google Sans Flex typography with a system-font fallback; semantic content and visa disclaimers retained.
-- GSAP-based entrance, card, and scroll-reveal enhancements retain reduced-motion and CDN failure fallbacks.
-- The country-specific `site-indonesia` theme class controls the distinctive local palette.
-
-## Contact integration (Indonesia)
-
-- Home navigation "Contact us" targets the actual enquiry form at `#contact-cta`.
-- The intake mirrors the published contact page's core fields; visa-pathway follow-ups appear conditionally.
-- The `/api/contact` Vercel function proxies published form definition requests and enquiry submissions to the ANZ Migrate domain. The upstream submission collection route defaults to Payload's documented `/api/form-submissions` and may require confirmation/configuration in `ANZMIGRATE_SUBMIT_ENDPOINT`; non-2xx responses are never treated as success.
-- No credentials are shipped to browsers; no server-side applicant database is introduced.
-- Update the privacy text if infrastructure, storage or processing changes. The official privacy policy is linked alongside consent.
-- Keep GSAP progressive enhancement separate from form validation or delivery.
-
-## Contact assessment form / October 2026
-- \`contact-schema.json\` contains the user-provided, **sanitized** definition for form 1: 50 fields, 27 enabled conditional rules, exact field keys and option values. Private webhook configuration, tokens, URLs and notification settings are intentionally **not** copied into this public repository.
-- \`contact-form.mjs\` renders the questionnaire progressively. It reuses \`contact-rules.mjs\` with the server to show/hide questions and country-specific choices. Initially unanswered status-dependent questions stay hidden. Unselected and hidden fields are never submitted.
-- \`api/contact.mjs\` validates all visible required questions and permitted options on the server. Do not claim that a submission was received without an explicit upstream receipt. An allowlisted \`ANZMIGRATE_SUBMIT_ENDPOINT\` at \`https://www.anzmigrate.com\` may be needed to match the production intake route. \`ANZMIGRATE_SUBMIT_FORMAT\` supports \`payload\` (default) or \`convert\` for the expected request body.
-- The supplied JSON does **not** document the actual submission or document-upload transport. Optional attachment questions appear as defined, but visitors who need to provide files are directed to the original ANZ Migrate site. No files are silently discarded. Do not enable satellite uploads without a verified, authenticated document-storage pipeline.
-- Privacy consent and an anti-spam field remain. Neither the static site nor this relay keeps its own database.
-- Keep Google Sans Flex and GSAP independent from form validation, including no-motion fallbacks.
-
+1. Verify responsiveness, keyboard navigation and color contrast.
+2. Test the branching logic for citizenship, sponsorship, work, partnership, resident-return, visitor and student cases.
+3. Confirm there are no file inputs, document-upload conditions or third-party branded contact details.
+4. Confirm unavailable and failed submissions have a truthful error state.
+5. Recheck legal and migration information against current official sources before publication.

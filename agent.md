@@ -9,7 +9,7 @@ This is a standalone static Australian immigration information site for Indonesi
 - Use semantic HTML, local CSS and local vanilla JavaScript.
 - Keep the site deployable by opening its own `index.html` or serving the folder as a static root.
 - Do not add React, Vue, Next.js, Tailwind, Bootstrap, jQuery, TypeScript, npm packages, build tools or a backend.
-- Do not add a contact form, fake submission state, eligibility calculator, chatbot, testimonial, rating or invented professional credential.
+- The site includes a conditional contact questionnaire. Only show a successful submission after confirmation from an independently configured receiving service. Do not introduce an eligibility calculator, chatbot, testimonial, rating or invented professional credential.
 - Do not add unrelated visa categories.
 - The website name is the brand identifier. Do not create a logo, logo mark, flag, mascot or invented firm identity.
 

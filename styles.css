@@ -770,7 +770,7 @@ p, li { overflow-wrap: break-word; }
 @media (max-width: 760px) { .contact-layout { grid-template-columns: 1fr; } .contact-aside { padding: 2rem; } .contact-aside-top + .contact-channel { margin-top: 1rem; } }
 @media (max-width: 480px) { .contact-form-panel { padding: 1.4rem 1.1rem; } .form-grid { grid-template-columns: 1fr; } .phone-group { grid-template-columns: minmax(6.5rem,.42fr) minmax(0,1fr); } .form-submit .button { width: 100%; } }
 
-/* Schema-driven ANZ Migrate form elements */
+/* Schema-driven, independently branded enquiry form */
 #contact-dynamic-fields { align-items: start; }
 #contact-dynamic-fields .form-field[hidden] { display: none !important; }
 #contact-dynamic-fields .form-field[data-width="50"] { grid-column: span 1; }
@@ -781,8 +781,8 @@ p, li { overflow-wrap: break-word; }
 #contact-dynamic-fields .form-choice .choice-pill { max-width: 100%; }
 #contact-dynamic-fields .form-choice .choice-pill span { white-space: normal; line-height: 1.4; }
 #contact-dynamic-fields .form-field .field-hint { display: block; line-height: 1.6; }
-#contact-dynamic-fields .form-field :is(input[type="file"],input[type="date"]) { min-width: 0; }
-#contact-dynamic-fields .form-field input[type="file"] { width: 100%; padding: .8rem; border: 1px solid var(--line-strong); border-radius: .8rem; background: var(--surface-soft); }
+#contact-dynamic-fields .form-field input[type="date"] { min-width: 0; }
+
 #contact-dynamic-fields .form-field .form-checkbox-label { display: flex; gap: .75rem; align-items: start; color: var(--ink); font-size: .91rem; font-weight: 640; line-height: 1.6; cursor: pointer; }
 #contact-dynamic-fields .form-checkbox-label input { flex: 0 0 auto; width: 1.1rem; height: 1.1rem; margin: .25rem 0 0; accent-color: var(--dark); }
 #contact-dynamic-fields .multi-options { display: grid; gap: .75rem; }
@@ -790,9 +790,24 @@ p, li { overflow-wrap: break-word; }
 .form-loading { grid-column: 1 / -1; margin: 0; padding: 1rem 0; font-size: .95rem; }
 .contact-consent-wrap { margin-top: 1.5rem; }
 .contact-submit:disabled { opacity: .55; cursor: not-allowed; }
-.contact-upload-note { display: block; margin-top: .5rem; font-size: .78rem; color: var(--muted); }
+
 @media (max-width: 560px) {
   #contact-dynamic-fields .form-field[data-width="50"] { grid-column: 1 / -1; }
   #contact-dynamic-fields .form-choice .choice-row { flex-direction: column; align-items: stretch; }
   #contact-dynamic-fields .form-choice .choice-pill span { width: 100%; }
+}
+
+/* Non-branded contact guidance and honest unavailable-service state */
+.contact-channel strong {
+  display: block;
+  max-width: 24rem;
+  color: #fff;
+  font-size: clamp(1rem, 1.35vw, 1.15rem);
+  font-weight: 620;
+  line-height: 1.5;
+}
+.form-status[data-state="info"] {
+  color: #31465e;
+  background: #eaf2fb;
+  border-color: #c6d8e9;
 }

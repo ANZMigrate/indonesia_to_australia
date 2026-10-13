@@ -1,6 +1,6 @@
 import { evaluateForm } from './contact-rules.mjs';
 
-/* ANZ Migrate — Indonesia satellite contact intake.
+/* Indonesia to Australia — independent visa enquiry intake.
  * Field definitions, options and all enabled show/hide rules come from the
  * supplied (redacted) contact-schema.json. GSAP remains independent.
  */
@@ -11,7 +11,6 @@ if (form) {
   const submit = form.querySelector('button[type="submit"]');
   const status = document.getElementById('contact-form-status');
   const originalButton = submit.innerHTML;
-  const officialUrl = 'https://www.anzmigrate.com/contact';
   let schema = null;
   let state = { visible: {}, optionVisibility: {} };
   let sending = false;
@@ -92,7 +91,7 @@ if (form) {
         input.placeholder = optional(field.placeholder || 'Tell us about your circumstances or questions.');
       } else {
         input = make('input');
-        input.type = ['email','date','number','tel','file'].includes(type) ? type : 'text';
+        input.type = ['email','date','number','tel'].includes(type) ? type : 'text';
         if (field.placeholder) input.placeholder = field.placeholder;
         if (type === 'date' && ['yourDateOfBirth','partnerDateOfBirth'].includes(key)) {
           const today = new Date();
@@ -100,10 +99,6 @@ if (form) {
         }
         if (type === 'number') input.inputMode = 'numeric';
         if (type === 'tel') input.inputMode = 'tel';
-        if (type === 'file') {
-          if (field.accept) input.accept = field.accept;
-          input.multiple = !!field.allowMultiple;
-        }
         if (type === 'text' || type === 'email' || type === 'tel') input.maxLength = 250;
       }
       input.id = id;
@@ -126,14 +121,6 @@ if (form) {
       }
     }
     if (field.helpText) shell.append(make('span','field-hint',field.helpText));
-    if (type === 'file') {
-      const note = make('span','contact-upload-note',
-        'Documents cannot yet be forwarded securely through this satellite site. If you need to attach documents, use the official ANZ Migrate form.');
-      shell.append(note);
-      const link = make('a','text-link','Open official upload form');
-      link.href = officialUrl; link.target = '_blank'; link.rel = 'noopener noreferrer';
-      shell.append(link);
-    }
     return shell;
   }
 
@@ -150,8 +137,6 @@ if (form) {
         data[field.key] = inputs.filter(input => input.checked).map(input => input.value);
       } else if (field.type === 'checkbox') {
         data[field.key] = !!inputs[0]?.checked;
-      } else if (field.type === 'file') {
-        data[field.key] = [...(inputs[0]?.files || [])].map(file => file.name);
       } else {
         data[field.key] = inputs[0]?.value || '';
       }
@@ -210,7 +195,6 @@ if (form) {
   }
 
   function invalidField(field, value) {
-    if (field.type === 'file') return '';
     if (field.required) {
       const empty = Array.isArray(value) ? value.length === 0
         : field.type === 'checkbox' ? !value : !String(value || '').trim();
@@ -257,14 +241,6 @@ if (form) {
       announce('Please read and agree to the privacy notice before sending.');
       return;
     }
-    const hasFiles = schema.fields.some(field =>
-      field.type === 'file' && state.visible[field.key] &&
-      (values[field.key] || []).length > 0
-    );
-    if (hasFiles) {
-      announce('Document uploads cannot be forwarded by this satellite form. Please submit your enquiry with attachments using the official ANZ Migrate contact form.');
-      return;
-    }
     const data = { ...values, consent:true,
       companyWebsite: form.querySelector('[name="companyWebsite"]').value };
     const phone = data.phone || '';
@@ -289,13 +265,26 @@ if (form) {
       if (!response.ok || result.ok !== true) throw new Error(result.error || 'The receiving service did not confirm your submission.');
       form.reset();
       updateVisibility();
-      announce('Thank you. We have received your details and our team will contact you shortly.','success');
+      announce('Your enquiry was accepted by the configured receiving service.','success');
     } catch (error) {
       announce((error.name === 'AbortError' ? 'The request timed out.' : error.message || 'The enquiry could not be sent.') +
-        ' Your details have not been confirmed as received. Please use anzmigrate.com/contact.');
+        ' Your enquiry has not been confirmed as received. Please try again later.');
     } finally {
       sending = false;
-      submit.disabled = false;
+      // Never offer submission when no independent receiving service is configured.
+      try {
+        const readiness = await fetch('/api/contact', {headers:{Accept:'application/json'},cache:'no-store'});
+        const service = await readiness.json();
+        if (readiness.ok && service.submissionReady === true) {
+          submit.disabled = false;
+        } else {
+          submit.disabled = true;
+          announce('The questionnaire is available to review, but online submission is temporarily unavailable.','info');
+        }
+      } catch {
+        submit.disabled = true;
+        announce('Online submission is temporarily unavailable. Please try again later.','info');
+      }
       submit.innerHTML = originalButton;
     }
   }
@@ -326,8 +315,8 @@ if (form) {
       form.addEventListener('submit', submitForm);
     } catch {
       mount.setAttribute('aria-busy','false');
-      mount.replaceChildren(make('p','form-loading','The questionnaire cannot be loaded right now. Please use the official ANZ Migrate enquiry form.'));
-      announce('Unable to load the questionnaire. Use anzmigrate.com/contact to submit your enquiry.');
+      mount.replaceChildren(make('p','form-loading','The questionnaire is temporarily unavailable. Please try again later.'));
+      announce('Unable to load the questionnaire. Please try again later.');
     }
   }
   init();

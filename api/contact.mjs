@@ -6,7 +6,6 @@ const schema = JSON.parse(readFileSync(new URL('../contact-schema.json', import.
 const fields = schema.fields || [];
 const countries = fields.find(f => f.key === 'country')?.options || [];
 const LIMIT = 24000;
-const fallbackEndpoint = 'https://www.anzmigrate.com/api/convert-form-submissions';
 
 function reply(res, status, data) {
   res.setHeader('Cache-Control', 'no-store');
@@ -26,7 +25,6 @@ function validDate(value, requirePast) {
 function validate(field, value, allowed) {
   if (field.required && isEmpty(value)) return 'Please complete: ' + field.label;
   if (isEmpty(value)) return null;
-  if (field.type === 'file') return 'Please upload documents using the official ANZ Migrate contact page.';
   if (field.type === 'checkbox') return typeof value === 'boolean' ? null : 'Invalid checkbox data.';
   if (field.type === 'multi-select') {
     if (!Array.isArray(value) || value.length > 40) return 'Invalid multiple-choice answer.';
@@ -51,7 +49,9 @@ function validate(field, value, allowed) {
 }
 export default async function handler(req,res) {
   if (req.method === 'GET') return reply(res,200,{ok:true,formId:schema.id,
-    fieldCount:fields.length,conditionCount:schema.conditions.length,updatedAt:schema.updatedAt});
+    fieldCount:fields.length,conditionCount:schema.conditions.length,
+    submissionReady:Boolean(process.env.CONTACT_SUBMIT_ENDPOINT && process.env.CONTACT_SUBMIT_HOST),
+    updatedAt:schema.updatedAt});
   if (req.method !== 'POST') {
     res.setHeader('Allow','GET, POST');
     return reply(res,405,{ok:false,error:'Method not allowed.'});
@@ -85,12 +85,18 @@ export default async function handler(req,res) {
     if (error) return reply(res,400,{ok:false,error});
     if (!isEmpty(value)) submissionData.push({field:field.key,value});
   }
+  // No automatic routing to a previous provider. The site operator must
+  // explicitly configure a trusted, HTTPS receiving service and its exact host.
+  if (!process.env.CONTACT_SUBMIT_ENDPOINT || !process.env.CONTACT_SUBMIT_HOST) {
+    return reply(res,503,{ok:false,error:'Online enquiries are not configured yet.'});
+  }
   let url;
   try {
-    url = new URL(process.env.ANZMIGRATE_SUBMIT_ENDPOINT || fallbackEndpoint);
-    if (url.protocol !== 'https:' || url.hostname !== 'www.anzmigrate.com') throw new Error('Invalid hostname');
-  } catch { return reply(res,503,{ok:false,error:'The upstream service is not configured.'}); }
-  const mode = process.env.ANZMIGRATE_SUBMIT_FORMAT || 'payload';
+    url = new URL(process.env.CONTACT_SUBMIT_ENDPOINT);
+    if (url.protocol !== 'https:' || url.hostname !== process.env.CONTACT_SUBMIT_HOST ||
+        url.username || url.password || url.port || url.hash) throw new Error('Invalid endpoint');
+  } catch { return reply(res,503,{ok:false,error:'The receiving service configuration is invalid.'}); }
+  const mode = process.env.CONTACT_SUBMIT_FORMAT || 'payload';
   if (!['payload','convert'].includes(mode)) return reply(res,503,{ok:false,error:'Invalid submission format.'});
   const payload = mode === 'payload'
     ? { form:schema.id,submissionData }
@@ -102,14 +108,14 @@ export default async function handler(req,res) {
       method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
       body:JSON.stringify(payload),signal:controller.signal
     });
-    if (!response.ok) return reply(res,502,{ok:false,error:'ANZ Migrate did not accept this enquiry. Please use anzmigrate.com/contact.'});
+    if (!response.ok) return reply(res,502,{ok:false,error:'The receiving service did not accept the enquiry. Please try again later.'});
     const receipt = await response.json().catch(()=>null);
     if (!receipt || receipt.errors || receipt.error || receipt.success===false ||
       !(receipt.success===true || receipt.doc?.id || receipt.id)) {
-      return reply(res,502,{ok:false,error:'The submission receipt could not be verified. Use anzmigrate.com/contact.'});
+      return reply(res,502,{ok:false,error:'The receiving service did not confirm the enquiry. Please try again later.'});
     }
     return reply(res,200,{ok:true});
   } catch {
-    return reply(res,502,{ok:false,error:'The ANZ Migrate service could not be reached. Use anzmigrate.com/contact.'});
+    return reply(res,502,{ok:false,error:'The receiving service could not be reached. Please try again later.'});
   } finally { clearTimeout(timeout); }
 }
