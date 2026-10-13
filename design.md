@@ -70,3 +70,12 @@ The local script uses GSAP for header entrance, hero entrance, card reveal and a
 - No credentials are shipped to browsers; no server-side applicant database is introduced.
 - Update the privacy text if infrastructure, storage or processing changes. The official privacy policy is linked alongside consent.
 - Keep GSAP progressive enhancement separate from form validation or delivery.
+
+## Contact assessment form / October 2026
+- \`contact-schema.json\` contains the user-provided, **sanitized** definition for form 1: 50 fields, 27 enabled conditional rules, exact field keys and option values. Private webhook configuration, tokens, URLs and notification settings are intentionally **not** copied into this public repository.
+- \`contact-form.mjs\` renders the questionnaire progressively. It reuses \`contact-rules.mjs\` with the server to show/hide questions and country-specific choices. Initially unanswered status-dependent questions stay hidden. Unselected and hidden fields are never submitted.
+- \`api/contact.mjs\` validates all visible required questions and permitted options on the server. Do not claim that a submission was received without an explicit upstream receipt. An allowlisted \`ANZMIGRATE_SUBMIT_ENDPOINT\` at \`https://www.anzmigrate.com\` may be needed to match the production intake route. \`ANZMIGRATE_SUBMIT_FORMAT\` supports \`payload\` (default) or \`convert\` for the expected request body.
+- The supplied JSON does **not** document the actual submission or document-upload transport. Optional attachment questions appear as defined, but visitors who need to provide files are directed to the original ANZ Migrate site. No files are silently discarded. Do not enable satellite uploads without a verified, authenticated document-storage pipeline.
+- Privacy consent and an anti-spam field remain. Neither the static site nor this relay keeps its own database.
+- Keep Google Sans Flex and GSAP independent from form validation, including no-motion fallbacks.
+
