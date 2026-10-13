@@ -112,3 +112,63 @@
   const year = document.querySelector('[data-year]');
   if (year) year.textContent = String(new Date().getFullYear());
 })();
+
+/* Progressive enhancement for the 2026 editorial refresh. GSAP remains optional. */
+(() => {
+  const header = document.querySelector('.site-header');
+  const nav = document.querySelector('.primary-nav');
+  const toggle = document.querySelector('.nav-toggle');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let pendingFrame = false;
+  const updateHeader = () => {
+    pendingFrame = false;
+    if (header) header.classList.toggle('is-scrolled', window.scrollY > 14);
+  };
+  window.addEventListener('scroll', () => {
+    if (pendingFrame) return;
+    pendingFrame = true;
+    window.requestAnimationFrame(updateHeader);
+  }, { passive: true });
+  updateHeader();
+
+  if (header && nav && toggle) {
+    document.addEventListener('pointerdown', (event) => {
+      if (nav.classList.contains('is-open') && !header.contains(event.target)) {
+        nav.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.textContent = 'Menu';
+      }
+    });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 760 && nav.classList.contains('is-open')) {
+        nav.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.textContent = 'Menu';
+      }
+    });
+  }
+
+  if (reduceMotion || !window.gsap) return;
+
+  // Motion is decoration only: no core text is hidden before the intersection.
+  const headings = document.querySelectorAll('.section-head, .split-layout > div:first-child, .page-marker, .contact-cta-copy');
+  const animateHeading = (node) => window.gsap.fromTo(node,
+    { autoAlpha: 0.65, y: 18 },
+    { autoAlpha: 1, y: 0, duration: 0.85, ease: 'power2.out', overwrite: true }
+  );
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries, instance) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        animateHeading(entry.target);
+        instance.unobserve(entry.target);
+      }
+    }, { threshold: 0.08, rootMargin: '0px 0px -5% 0px' });
+    headings.forEach((node) => observer.observe(node));
+  }
+  if (document.querySelector('.visual-grid')) {
+    window.gsap.to('.visual-grid', {
+      x: 10, y: -8, duration: 7, repeat: -1, yoyo: true, ease: 'sine.inOut'
+    });
+  }
+})();

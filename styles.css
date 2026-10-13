@@ -351,3 +351,353 @@ p { color: var(--muted); }
 .route-card p strong { color: inherit; font-weight: 650; }
 .route-card--study p strong { color: #fff; }
 .inline-cta .text-link { flex: 0 0 auto; white-space: nowrap; }
+
+/* 2026 editorial redesign — inspired by contemporary consulting and product-site
+   design patterns. Uses Google Sans Flex and preserves all existing content. */
+:root {
+  --page-bg: #f7f9fb;
+  --surface: #ffffff;
+  --surface-soft: #edf2f6;
+  --surface-deep: #dfe7ed;
+  --ink: #142130;
+  --muted: #526373;
+  --faint: #81909d;
+  --accent: #ef9d76;
+  --accent-strong: #945338;
+  --accent-pale: #f9e8db;
+  --line: rgba(20, 33, 48, 0.12);
+  --line-strong: rgba(20, 33, 48, 0.23);
+  --dark: #101d2c;
+  --dark-muted: #c2cbd6;
+  --focus: #a85428;
+  --container: 1380px;
+  --section-space: clamp(5rem, 8.5vw, 9.25rem);
+  --radius-sm: 0.8rem;
+  --radius-md: 1.35rem;
+  --radius-lg: 2rem;
+  --shadow: 0 24px 65px rgba(15, 32, 52, 0.1);
+}
+.site-anzinnovate {
+  --page-bg: #f6f9f7;
+  --surface: #ffffff;
+  --surface-soft: #edf3ee;
+  --surface-deep: #dce6dd;
+  --ink: #14282c;
+  --muted: #506368;
+  --accent: #b8d97d;
+  --accent-strong: #436426;
+  --accent-pale: #ebf5d5;
+  --line: rgba(16, 40, 44, 0.13);
+  --line-strong: rgba(16, 40, 44, 0.24);
+  --dark: #10262a;
+  --dark-muted: #c5d5d1;
+  --focus: #517228;
+  --radius-sm: 0.8rem;
+  --radius-md: 1.35rem;
+  --radius-lg: 2rem;
+  --shadow: 0 24px 65px rgba(16, 40, 44, 0.1);
+}
+.site-hk {
+  --accent: #f0a184;
+  --accent-strong: #945138;
+  --accent-pale: #fae9df;
+}
+.site-indonesia {
+  --accent: #f59b86;
+  --accent-strong: #a44837;
+  --accent-pale: #fbe6df;
+}
+.site-uk {
+  --accent: #abbcf8;
+  --accent-strong: #4c5f9d;
+  --accent-pale: #e8edff;
+}
+.site-vietnam {
+  --accent: #e7bb77;
+  --accent-strong: #855f29;
+  --accent-pale: #fcf1dd;
+}
+html { scroll-padding-top: 6rem; }
+body {
+  font-family: "Google Sans Flex", system-ui, Arial, sans-serif;
+  font-optical-sizing: auto;
+  font-synthesis: none;
+  letter-spacing: -0.008em;
+}
+::selection { background: var(--accent-pale); color: var(--ink); }
+.container { width: min(calc(100% - (var(--gutter) * 2)), var(--container)); }
+.site-header {
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid rgba(20, 33, 48, 0.08);
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+  transition: box-shadow 220ms ease, background 220ms ease;
+}
+.site-header.is-scrolled { box-shadow: 0 10px 40px rgba(16, 28, 42, 0.08); }
+.header-inner { min-height: 5.5rem; }
+.site-name,
+.site-anzinnovate .site-name { letter-spacing: -0.06em; font-size: clamp(1.15rem, 1.45vw, 1.4rem); font-weight: 790; }
+.primary-nav { gap: clamp(1rem, 2vw, 2.1rem); }
+.primary-nav a { font-size: 0.85rem; font-weight: 640; }
+.primary-nav .nav-contact {
+  border-radius: 0.8rem;
+  padding: 0.73rem 1.15rem;
+  background: var(--dark);
+  border-color: var(--dark);
+}
+.primary-nav .nav-contact:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
+.scroll-progress { height: 3px; }
+.scroll-progress span { background: var(--accent-strong); }
+.eyebrow, .page-kicker {
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 770;
+  letter-spacing: 0.105em;
+}
+.eyebrow::before, .page-kicker::before {
+  width: 0.48rem;
+  height: 0.48rem;
+  box-shadow: 0 0 0 0.26rem var(--accent-pale);
+}
+h1, h2, h3 { font-optical-sizing: auto; text-wrap: balance; letter-spacing: -0.065em; }
+h1 { font-weight: 780; font-size: clamp(3.35rem, 6.4vw, 6.45rem); line-height: 0.99; }
+h2 { font-weight: 735; font-size: clamp(2.15rem, 3.9vw, 3.95rem); line-height: 1.06; }
+h3 { font-weight: 690; line-height: 1.16; }
+p, li { overflow-wrap: break-word; }
+.hero {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(5.25rem, 8vw, 8rem) 0 clamp(5rem, 7vw, 7rem);
+  background: radial-gradient(ellipse at 86% 19%, rgba(111, 154, 163, 0.23), transparent 38%),
+              radial-gradient(ellipse at 0% 90%, rgba(116, 143, 171, 0.12), transparent 39%),
+              var(--dark);
+}
+.hero::before {
+  position: absolute;
+  z-index: -1;
+  top: -15rem;
+  right: -18rem;
+  width: min(75vw, 62rem);
+  aspect-ratio: 1;
+  content: "";
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 50%;
+  box-shadow: 0 0 0 8rem rgba(255,255,255,.018), 0 0 0 17rem rgba(255,255,255,.01);
+  pointer-events: none;
+}
+.hero-grid { align-items: center; gap: clamp(2.5rem, 5.5vw, 6rem); grid-template-columns: minmax(0,1.08fr) minmax(0,.92fr); }
+.hero-copy { max-width: 780px; }
+.hero .eyebrow { color: var(--accent); }
+.hero .eyebrow::before { background: var(--accent); box-shadow: 0 0 0 .27rem rgba(255,255,255,.1); }
+.hero h1 { color: #fff; max-width: 920px; }
+.hero-lede { color: #c9d4de; max-width: 610px; line-height: 1.64; font-size: clamp(1.02rem, 1.3vw, 1.18rem); }
+.hero .button {
+  background: #f7fafb;
+  border-color: #f7fafb;
+  color: #112337;
+}
+.hero .button:hover { background: var(--accent); border-color: var(--accent); color: #142130; }
+.hero .button-secondary { background: transparent; border-color: rgba(255,255,255,.34); color: #fff; }
+.hero .button-secondary:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.74); }
+.hero-notes { margin-top: 2.8rem; padding-top: 1.3rem; border-color: rgba(255,255,255,.18); color: #c2cfda; }
+.hero-notes span + span::before { color: var(--accent); }
+.button {
+  min-height: 3.25rem;
+  padding: 0.88rem 1.4rem;
+  border-radius: 0.85rem;
+  font-size: 0.9rem;
+  font-weight: 730;
+  box-shadow: 0 3px 9px rgba(12, 23, 36, 0.04);
+}
+.button:hover { transform: translateY(-2px); }
+.button-secondary { box-shadow: none; }
+.text-link { font-weight: 720; }
+.hero-visual, .site-anzinnovate .hero-visual {
+  min-height: clamp(26rem, 42vw, 37rem);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 2rem;
+  background: radial-gradient(circle at 76% 24%, rgba(178, 211, 225, .26), transparent 32%),
+              linear-gradient(145deg, #263e50 0%, #162b3e 45%, #102330 100%);
+  box-shadow: 0 28px 80px rgba(0,0,0,.28), inset 0 1px rgba(255,255,255,.2);
+}
+.site-anzinnovate .hero-visual {
+  background: radial-gradient(circle at 74% 24%, rgba(185, 220, 171, .23), transparent 35%),
+              linear-gradient(145deg, #29464a 0%, #163135 55%, #10262a 100%);
+}
+.hero-visual::before, .hero-visual::after { border-color: rgba(255,255,255,.3); }
+.hero-visual::before { top: 13%; right: -17%; width: 88%; opacity: .48; }
+.hero-visual::after { right: 20%; bottom: -13%; width: 59%; opacity: .32; }
+.visual-grid { background-size: 25% 25%; opacity: .26; filter: invert(1); }
+.visual-label { top: 1.6rem; right: 1.6rem; left: 1.6rem; color: #d9e5ed; letter-spacing: .095em; }
+.visual-big {
+  top: 23%;
+  left: 8%;
+  color: rgba(255,255,255,.96);
+  font-size: clamp(6.4rem, 13vw, 12rem);
+  font-weight: 820;
+  letter-spacing: -.13em;
+  text-shadow: 0 16px 40px rgba(0,0,0,.1);
+}
+.visual-big span { color: var(--accent); }
+.visual-card, .site-anzinnovate .visual-card {
+  right: 6%;
+  bottom: 6%;
+  width: min(78%, 23rem);
+  padding: clamp(1.25rem, 2.3vw, 1.7rem);
+  border: 1px solid rgba(255,255,255,.7);
+  border-radius: 1.4rem;
+  background: rgba(255,255,255,.96);
+  color: var(--ink);
+  box-shadow: 0 24px 55px rgba(4,15,30,.25);
+}
+.visual-card-top { color: #5d7180; margin-bottom: 1.4rem; }
+.visual-card strong { color: var(--ink); font-size: clamp(1.8rem, 3.1vw, 2.65rem); }
+.visual-card p { color: var(--muted); }
+.signal-strip { background: var(--surface); border-bottom-color: var(--line); }
+.signal-inner { min-height: 5.25rem; gap: 1.7rem; }
+.signal-inner span { color: var(--muted); font-size: 0.71rem; font-weight: 760; letter-spacing: 0.08em; }
+.signal-inner span::before { content: "•"; color: var(--accent-strong); margin-right: .8rem; }
+.section-soft { background: var(--surface-soft); }
+.section-head { align-items: start; gap: clamp(2rem, 4vw, 5rem); margin-bottom: clamp(2.5rem, 4.5vw, 4rem); }
+.section-head > p { max-width: 490px; line-height: 1.75; }
+.section-intro { line-height: 1.8; }
+.route-grid, .visa-grid, .evidence-grid, .review-grid, .faq-grid { gap: 1.15rem; }
+.route-card, .visa-card, .content-panel, .evidence-card, .review-card, .info-panel,
+.site-anzinnovate .route-card, .site-anzinnovate .visa-card,
+.site-anzinnovate .content-panel, .site-anzinnovate .evidence-card,
+.site-anzinnovate .review-card {
+  border: 1px solid rgba(20, 33, 48, .1);
+  border-radius: 1.45rem;
+  background: var(--surface);
+  box-shadow: 0 6px 20px rgba(20,33,48,.025);
+}
+.route-card, .visa-card, .evidence-card, .review-card {
+  transition: transform 260ms cubic-bezier(.2,.8,.2,1), border-color 260ms ease, box-shadow 260ms ease;
+}
+.route-card:hover, .visa-card:hover, .evidence-card:hover, .review-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--line-strong);
+  box-shadow: 0 20px 48px rgba(19,36,54,.09);
+}
+.visa-card { min-height: 21.5rem; padding: clamp(1.6rem, 2.5vw, 2.2rem); }
+.visa-card-top { margin-bottom: 2.7rem; }
+.visa-number { color: var(--accent-strong); font-size: clamp(2.65rem, 4.25vw, 4.5rem); font-weight: 800; }
+.visa-card p, .evidence-card p, .review-card p { line-height: 1.7; }
+.visa-label, .card-index, .card-label, .panel-label { letter-spacing: .11em; font-weight: 760; }
+.visa-card h3 { font-size: clamp(1.25rem, 1.8vw, 1.55rem); }
+.route-card { min-height: 24rem; padding: clamp(1.65rem, 3.1vw, 2.8rem); }
+.route-card h3 { font-size: clamp(1.5rem, 2.45vw, 2.15rem); }
+.route-card::after { right: -7rem; bottom: -10rem; width: 20rem; height: 20rem; border-color: var(--accent-strong); opacity: .18; }
+.route-card--study { background: var(--dark) !important; border-color: rgba(255,255,255,.1) !important; }
+.route-card--study h3, .route-card--study p, .route-card--study .card-index { color: #fff; }
+.route-card--study p { color: var(--dark-muted); }
+.inline-cta { gap: 2rem; border-top: 1px solid var(--line); padding-top: 1.7rem; }
+.inline-cta p { max-width: 900px; margin-bottom: 0; line-height: 1.7; }
+.content-panel { padding: clamp(1.7rem, 3.5vw, 3rem); }
+.tick-list { gap: .8rem; }
+.review-card, .evidence-card { padding: clamp(1.6rem, 2.4vw, 2.1rem); }
+.section-dark {
+  background: radial-gradient(ellipse at 85% 10%, rgba(104,138,150,.15), transparent 38%), var(--dark);
+}
+.dark-index { gap: 0; }
+.dark-index li { padding: 1.35rem 0; align-items: baseline; }
+.dark-index strong { font-weight: 680; }
+.page-hero {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(5.2rem, 9vw, 8rem) 0;
+  background: radial-gradient(ellipse at 85% 22%, rgba(114,151,163,.18), transparent 40%), var(--dark);
+  border: 0;
+}
+.page-hero h1 { color: #fff; max-width: 890px; font-size: clamp(3rem, 5.5vw, 5.4rem); }
+.page-hero p { color: #c6d4dc; line-height: 1.7; }
+.page-hero .page-kicker { color: var(--accent); }
+.page-hero .page-kicker::before { background: var(--accent); box-shadow: 0 0 0 .26rem rgba(255,255,255,.1); }
+.crumbs, .crumbs a { color: #c3d2dd; }
+.crumbs span { color: #dfe8ee; }
+.page-marker {
+  padding: clamp(1.5rem, 3vw, 2rem);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 1.5rem;
+  background: rgba(255,255,255,.08);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: none;
+}
+.page-marker strong { color: var(--accent); }
+.page-marker span { color: #d8e2ea; }
+.compare-grid { border-radius: 1.4rem; }
+.compare-row { padding: 1.5rem; }
+.compare-row--head { background: var(--dark); }
+.compare-row strong { color: var(--ink); font-weight: 745; }
+.faq-list { gap: .95rem; max-width: 1050px; }
+.faq-list details {
+  padding: .3rem clamp(1.1rem, 2.5vw, 1.85rem);
+  border: 1px solid var(--line);
+  border-radius: 1.15rem;
+  background: var(--surface);
+  transition: border-color 180ms ease, background 180ms ease;
+}
+.faq-list details[open] { border-color: var(--line-strong); }
+.faq-list summary { padding: 1.05rem 0; font-size: clamp(1.03rem, 1.55vw, 1.22rem); line-height: 1.45; }
+.faq-list summary::after { color: var(--accent-strong); }
+.faq-answer { padding-bottom: 1.5rem; }
+.callout { padding: clamp(2rem, 4vw, 3.75rem); background: var(--accent-pale); }
+.contact-cta { background: var(--surface-soft); }
+.contact-cta-card, .site-anzinnovate .contact-cta-card {
+  border-radius: 2rem;
+  background: radial-gradient(circle at 88% 45%, rgba(135,174,175,.18), transparent 44%), var(--dark);
+}
+.contact-cta h2 { font-weight: 745; }
+.contact-cta-action .button { background: var(--accent); border-color: var(--accent); color: var(--dark); }
+.contact-cta-action .button:hover { background: #fff; border-color: #fff; color: var(--dark); }
+.site-footer, .site-anzinnovate .site-footer { background: #0c1926; }
+.site-footer .site-name { color: #fff; }
+.footer-nav a { line-height: 1.7; }
+@media (max-width: 1050px) {
+  .hero-grid { grid-template-columns: minmax(0,1fr) minmax(0,.95fr); gap: 2rem; }
+  .visual-big { font-size: clamp(5.8rem, 11vw, 9rem); }
+  .hero h1 { font-size: clamp(3rem, 5.9vw, 5rem); }
+}
+@media (max-width: 760px) {
+  .header-inner { min-height: 4.7rem; }
+  .nav-toggle { border-radius: .85rem; }
+  .primary-nav {
+    top: calc(100% + .55rem);
+    padding: .75rem;
+    border-radius: 1.2rem;
+    background: #fff;
+    box-shadow: 0 20px 60px rgba(14, 29, 44, .18);
+  }
+  .primary-nav a { padding: .9rem .8rem; }
+  .primary-nav .nav-contact { text-align: center; margin-top: .35rem; }
+  .hero { padding: 4.5rem 0 4.5rem; }
+  .hero-grid, .page-hero-grid, .split-layout, .section-head, .dark-layout { grid-template-columns: 1fr; }
+  .hero h1 { font-size: clamp(3.15rem, 11.5vw, 5.4rem); }
+  .hero-lede { max-width: 44rem; }
+  .hero-visual { min-height: 26rem; }
+  .visual-big { font-size: clamp(6rem, 22vw, 10rem); }
+  .page-marker { justify-self: stretch; width: 100%; }
+  .page-hero { padding: 4.5rem 0; }
+  .route-grid, .visa-grid, .review-grid, .evidence-grid { grid-template-columns: 1fr; }
+  .section-head { gap: .9rem; }
+  .inline-cta { align-items: flex-start; }
+}
+@media (max-width: 480px) {
+  .hero { padding-top: 3.75rem; }
+  .hero h1 { font-size: clamp(2.8rem, 12vw, 4rem); }
+  .hero-actions .button { width: 100%; }
+  .hero-visual { min-height: 22.5rem; border-radius: 1.25rem; }
+  .visual-big { top: 26%; left: 7%; font-size: clamp(5.4rem, 21vw, 7.5rem); }
+  .visual-label { top: 1.25rem; left: 1.25rem; right: 1.25rem; font-size: .6rem; }
+  .visual-card { left: 1rem; right: 1rem; bottom: 1rem; width: auto; padding: 1.05rem; }
+  .visual-card strong { font-size: 1.8rem; }
+  .visual-card-top { font-size: .58rem; margin-bottom: .9rem; }
+  .route-card { min-height: 21rem; }
+  .contact-cta-card { border-radius: 1.2rem; }
+  .dark-index li { flex-direction: column; gap: .3rem; }
+  .page-hero h1 { font-size: clamp(2.6rem, 10.5vw, 3.5rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header, .route-card, .visa-card, .evidence-card, .review-card { transition: none !important; }
+}
