@@ -53,3 +53,11 @@ The local script uses GSAP for header entrance, hero entrance, card reveal and a
 - Recheck official Home Affairs and CRICOS URLs when content changes.
 - If a form is added later, define the endpoint, privacy notice and success or error states before adding fields.
 - Keep country-specific copy genuinely rewritten. Do not make doorway pages by changing only the country name.
+
+## 2026 editorial refresh
+
+- Mobbin inspiration: [Oyster](https://mobbin.com/sites/sections/67fdec3d-e3a1-49f7-9c34-9923acb1eba5) and [Complex Law](https://mobbin.com/sites/sections/d6b4e853-443b-4754-b6a3-626b51a82d0c); no external design assets copied.
+- Midnight editorial hero, luminous geometric visa visualization, calm white information cards, refined mobile navigation and coherent inner-page treatment.
+- Google Sans Flex typography with a system-font fallback; semantic content and visa disclaimers retained.
+- GSAP-based entrance, card, and scroll-reveal enhancements retain reduced-motion and CDN failure fallbacks.
+- The country-specific `site-indonesia` theme class controls the distinctive local palette.
