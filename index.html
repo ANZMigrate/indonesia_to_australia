@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
   <script src="script.js" defer></script>
+  <script src="contact-form.js" defer></script>
 </head>
 <body class="site-indonesia" data-page="home">
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -236,18 +237,176 @@
       <div class="container"><div class="callout"><div><h2>Find out whether your record meets the NIV standard.</h2><p>An early assessment of your sector, indicators and evidence shows whether an EOI is realistic and what needs to be strengthened first.</p></div><div class="hero-actions"><a class="button" href="#review">Review the checklist</a><a class="button button-secondary" href="#faq">Applicant FAQ</a></div></div></div>
     </section>
 
-    <section class="section contact-cta" id="contact-cta">
+    <section class="section contact-section" id="contact-cta" aria-labelledby="contact-heading">
       <div class="container">
-        <div class="contact-cta-card" data-reveal>
-          <div class="contact-cta-copy">
-            <p class="eyebrow">More visa information</p>
-            <h2>If you're interested in other Australia or New Zealand Visa</h2>
-            <p>Visit ANZ Migrate for information about other Australian visa options and New Zealand pathways.</p>
+        <div class="contact-heading">
+          <div>
+            <p class="eyebrow">Talk to ANZ Migrate</p>
+            <h2 id="contact-heading">Your next chapter starts with a conversation.</h2>
           </div>
-          <div class="contact-cta-action">
-            <div class="contact-cta-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
-            <a class="button" href="https://www.anzmigrate.com" target="_blank" rel="noopener noreferrer">Visit ANZ Migrate</a>
-            <span class="contact-cta-meta">anzmigrate.com</span>
+          <p>Tell us about your migration goals and background. The team can use these details for an initial review of the Australian or New Zealand pathways that may be relevant to you.</p>
+        </div>
+        <div class="contact-layout">
+          <aside class="contact-aside" aria-label="Alternative contact options">
+            <div class="contact-aside-top">
+              <span class="contact-overline">Get in touch</span>
+              <h3>We are here to help you find clarity.</h3>
+              <p>Prefer to reach out directly? Use one of the official ANZ Migrate contact channels below.</p>
+            </div>
+            <div class="contact-channel">
+              <span>Email</span>
+              <a href="mailto:info@anzmigrate.com">info@anzmigrate.com</a>
+            </div>
+            <div class="contact-channel">
+              <span>Indonesia office</span>
+              <a href="tel:+622130002058">+62 21 3000 2058</a>
+            </div>
+            <div class="contact-channel">
+              <span>WhatsApp (messages only)</span>
+              <a href="https://wa.me/6588941773" rel="noopener noreferrer" target="_blank">+65 8894 1773</a>
+            </div>
+            <div class="contact-channel">
+              <span>Telegram</span>
+              <a href="https://t.me/ANZMigrate_bot" rel="noopener noreferrer" target="_blank">@ANZMigrate_bot</a>
+            </div>
+            <p class="contact-aside-note">For general guidance only. Eligibility and visa outcomes are not guaranteed. Please do not include passport numbers or other highly sensitive information in the notes field.</p>
+          </aside>
+
+          <div class="contact-form-panel">
+            <div class="contact-form-top">
+              <span class="contact-form-step">Enquiry form <span aria-hidden="true">/</span> ANZ Migrate</span>
+              <p>Fields marked <span aria-hidden="true">*</span> are required.</p>
+            </div>
+            <form id="visa-contact-form" class="visa-contact-form" method="post" action="/api/contact" data-form-id="1" novalidate>
+              <div class="contact-honeypot" aria-hidden="true">
+                <label for="contact-company-web">Leave this field empty</label>
+                <input id="contact-company-web" name="companyWebsite" type="text" tabindex="-1" autocomplete="off">
+              </div>
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="contact-first-name">First name <span aria-hidden="true">*</span></label>
+                  <input id="contact-first-name" name="firstName" type="text" autocomplete="given-name" maxlength="100" placeholder="Enter your first name" required>
+                </div>
+                <div class="form-field">
+                  <label for="contact-last-name">Last name <span aria-hidden="true">*</span></label>
+                  <input id="contact-last-name" name="lastName" type="text" autocomplete="family-name" maxlength="100" placeholder="Enter your last name" required>
+                </div>
+                <div class="form-field">
+                  <label for="contact-email">Email address <span aria-hidden="true">*</span></label>
+                  <input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="name@example.com" required>
+                </div>
+                <div class="form-field">
+                  <label for="contact-country">Country <span aria-hidden="true">*</span></label>
+                  <select id="contact-country" name="country" autocomplete="country-name" required>
+                    <option value="">Select your country</option>
+                    <option>Indonesia</option><option>Australia</option><option>Singapore</option>
+                    <option>Malaysia</option><option>Hong Kong</option><option>Vietnam</option>
+                    <option>Thailand</option><option>Philippines</option><option>India</option>
+                    <option>United Kingdom</option><option>United States</option><option>New Zealand</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div class="form-field form-field-full">
+                  <label for="contact-phone">Phone number <span aria-hidden="true">*</span></label>
+                  <div class="phone-group">
+                    <select name="phoneCode" id="contact-phone-code" aria-label="International dialing code">
+                      <option value="+62">ID +62</option><option value="+61">AU +61</option>
+                      <option value="+65">SG +65</option><option value="+60">MY +60</option>
+                      <option value="+852">HK +852</option><option value="+84">VN +84</option>
+                      <option value="+66">TH +66</option><option value="+63">PH +63</option>
+                      <option value="+91">IN +91</option><option value="+44">UK +44</option>
+                      <option value="+1">US +1</option><option value="+64">NZ +64</option>
+                    </select>
+                    <input id="contact-phone" name="phone" type="tel" autocomplete="tel-national" inputmode="tel" maxlength="30" placeholder="Enter your phone number" required>
+                  </div>
+                </div>
+                <fieldset class="form-field form-field-full form-choice">
+                  <legend>I'm interested in <span aria-hidden="true">*</span></legend>
+                  <div class="choice-row">
+                    <label class="choice-pill"><input type="radio" name="interestedIn" value="Australia" required checked><span>Australia</span></label>
+                    <label class="choice-pill"><input type="radio" name="interestedIn" value="New Zealand" required><span>New Zealand</span></label>
+                  </div>
+                </fieldset>
+                <div class="form-field form-field-full">
+                  <label for="contact-visa">I want a visa for <span aria-hidden="true">*</span></label>
+                  <select id="contact-visa" name="visaFor" required>
+                    <option value="">Select your visa purpose</option>
+                    <option value="skilled">Skilled migration / permanent residence</option>
+                    <option value="employment">Work / employer sponsored visa</option>
+                    <option value="innovation">National Innovation / talent visa</option>
+                    <option value="study">Study / student visa</option>
+                    <option value="partner">Partner / spouse visa</option>
+                    <option value="family">Parent / family visa</option>
+                    <option value="business">Business / investment visa</option>
+                    <option value="other">Other visa / not sure</option>
+                  </select>
+                  <span class="field-hint" id="visa-choice-hint">The questions below adapt to your selected pathway.</span>
+                </div>
+                <div class="form-field form-field-full">
+                  <label for="contact-dob">Your date of birth <span aria-hidden="true">*</span></label>
+                  <input id="contact-dob" name="dateOfBirth" type="date" autocomplete="bday" required>
+                  <span class="field-hint">Age matters for skilled, employment, business and investment visa assessments.</span>
+                </div>
+                <div class="conditional-panel form-field-full" id="conditional-professional" data-show-for="skilled,employment,innovation,business" hidden>
+                  <h3>Your professional background</h3>
+                  <div class="form-grid">
+                    <div class="form-field">
+                      <label for="contact-occupation">Current occupation <span aria-hidden="true">*</span></label>
+                      <input id="contact-occupation" name="occupation" type="text" maxlength="160" data-required-when-visible placeholder="Job title or field">
+                    </div>
+                    <div class="form-field">
+                      <label for="contact-experience">Years of relevant experience</label>
+                      <select id="contact-experience" name="experience"><option value="">Select one</option><option>Less than 1 year</option><option>1–2 years</option><option>3–5 years</option><option>6–10 years</option><option>More than 10 years</option></select>
+                    </div>
+                  </div>
+                  <p class="field-hint">For skilled or talent pathways, the team may ask for a CV or supporting evidence separately. Please do not send sensitive documents through this form.</p>
+                </div>
+                <div class="conditional-panel form-field-full" id="conditional-family" data-show-for="partner,family" hidden>
+                  <h3>About your family or partner</h3>
+                  <div class="form-grid">
+                    <div class="form-field">
+                      <label for="contact-relationship">Relationship to the applicant or sponsor <span aria-hidden="true">*</span></label>
+                      <select id="contact-relationship" name="relationship" data-required-when-visible>
+                        <option value="">Select relationship</option><option>Spouse / de facto partner</option><option>Fiancé(e)</option><option>Parent</option><option>Child</option><option>Other family member</option>
+                      </select>
+                    </div>
+                    <div class="form-field">
+                      <label for="contact-sponsor-status">Sponsor's status</label>
+                      <select id="contact-sponsor-status" name="sponsorStatus">
+                        <option value="">Select status</option><option>Australian / New Zealand citizen</option>
+                        <option>Permanent resident</option><option>Temporary visa holder</option>
+                        <option>Not sure</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="conditional-panel form-field-full" id="conditional-study" data-show-for="study" hidden>
+                  <h3>Study plans</h3>
+                  <div class="form-grid">
+                    <div class="form-field">
+                      <label for="contact-study-level">Intended study level</label>
+                      <select id="contact-study-level" name="studyLevel"><option value="">Select a level</option><option>English / foundation</option><option>Vocational / diploma</option><option>Bachelor's degree</option><option>Master's degree</option><option>Research / PhD</option><option>Undecided</option></select>
+                    </div>
+                    <div class="form-field">
+                      <label for="contact-study-start">When would you like to begin?</label>
+                      <select id="contact-study-start" name="studyStart"><option value="">Select timing</option><option>Within 3 months</option><option>Within 6 months</option><option>Within 12 months</option><option>Later / undecided</option></select>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-field form-field-full">
+                  <label for="contact-notes">Please provide any other relevant details</label>
+                  <textarea id="contact-notes" name="details" maxlength="3000" rows="5" placeholder="Tell us a little about your goals, circumstances or questions."></textarea>
+                </div>
+                <div class="form-field form-field-full">
+                  <label class="consent-field"><input type="checkbox" id="contact-consent" name="consent" required><span>I agree to have this information sent to ANZ Migrate for an enquiry review, and have read their <a href="https://www.anzmigrate.com/about-us/privacy-policy" target="_blank" rel="noopener noreferrer">privacy policy</a>. <span aria-hidden="true">*</span></span></label>
+                </div>
+              </div>
+              <div id="contact-form-status" class="form-status" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+              <div class="form-submit">
+                <button class="button contact-submit" type="submit">Send details <span aria-hidden="true">↗</span></button>
+                <p>Prefer the original? <a href="https://www.anzmigrate.com/contact" target="_blank" rel="noopener noreferrer">Open ANZ Migrate's official enquiry form</a>.</p>
+              </div>
+            </form>
           </div>
         </div>
       </div>

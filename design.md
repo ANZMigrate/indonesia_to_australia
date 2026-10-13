@@ -61,3 +61,12 @@ The local script uses GSAP for header entrance, hero entrance, card reveal and a
 - Google Sans Flex typography with a system-font fallback; semantic content and visa disclaimers retained.
 - GSAP-based entrance, card, and scroll-reveal enhancements retain reduced-motion and CDN failure fallbacks.
 - The country-specific `site-indonesia` theme class controls the distinctive local palette.
+
+## Contact integration (Indonesia)
+
+- Home navigation "Contact us" targets the actual enquiry form at `#contact-cta`.
+- The intake mirrors the published contact page's core fields; visa-pathway follow-ups appear conditionally.
+- The `/api/contact` Vercel function proxies published form definition requests and enquiry submissions to the ANZ Migrate domain. The upstream submission collection route defaults to Payload's documented `/api/form-submissions` and may require confirmation/configuration in `ANZMIGRATE_SUBMIT_ENDPOINT`; non-2xx responses are never treated as success.
+- No credentials are shipped to browsers; no server-side applicant database is introduced.
+- Update the privacy text if infrastructure, storage or processing changes. The official privacy policy is linked alongside consent.
+- Keep GSAP progressive enhancement separate from form validation or delivery.
