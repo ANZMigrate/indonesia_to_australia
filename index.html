@@ -15,6 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
   <script src="script.js" defer></script>
   <script type="module" src="contact-form.mjs"></script>
+  <script src="chatwoot-widget.js" defer></script>
 </head>
 <body class="site-indonesia" data-page="home">
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -254,6 +255,10 @@
               <p>The questionnaire adjusts to your circumstances, so you can provide the most relevant details without unnecessary questions.</p>
             </div>
             <div class="contact-channel">
+              <span>Indonesia phone</span>
+              <a href="tel:+622130002058">+62 21 3000 2058</a>
+            </div>
+            <div class="contact-channel">
               <span>01 / Destination</span>
               <strong>Choose Australia or New Zealand</strong>
             </div>
@@ -263,7 +268,7 @@
             </div>
             <div class="contact-channel">
               <span>03 / Enquiry</span>
-              <strong>Review and submit once the service is available</strong>
+              <strong>Submit when email delivery is configured</strong>
             </div>
             <p class="contact-aside-note">This form provides a structured enquiry, not an assessment of eligibility. Please do not enter passport numbers, financial account details or other highly sensitive information.</p>
           </aside>
@@ -284,13 +289,13 @@
               <div class="form-field form-field-full contact-consent-wrap">
                 <label class="consent-field">
                   <input type="checkbox" id="contact-consent" name="consent" required>
-                  <span>I consent to the information I provide being sent to the receiving service configured for this website, and I have read the <a href="privacy/">privacy notice</a>. <span aria-hidden="true">*</span></span>
+                  <span>I consent to this enquiry being emailed to the contact address configured for this website, and I have read the <a href="privacy/">privacy notice</a>. <span aria-hidden="true">*</span></span>
                 </label>
               </div>
               <div id="contact-form-status" class="form-status" role="status" aria-live="polite" aria-atomic="true" hidden></div>
               <div class="form-submit">
                 <button class="button contact-submit" type="submit" disabled>Send details <span aria-hidden="true">↗</span></button>
-                <p>No document attachments are requested. Submissions are available only when a receiving service is configured.</p>
+                <p>No document attachments are requested. Submissions are available when secure email delivery is configured.</p>
               </div>
             </form>
           </div>

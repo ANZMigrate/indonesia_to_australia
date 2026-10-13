@@ -265,7 +265,7 @@ if (form) {
       if (!response.ok || result.ok !== true) throw new Error(result.error || 'The receiving service did not confirm your submission.');
       form.reset();
       updateVisibility();
-      announce('Your enquiry was accepted by the configured receiving service.','success');
+      announce('Your enquiry has been accepted for email delivery.','success');
     } catch (error) {
       announce((error.name === 'AbortError' ? 'The request timed out.' : error.message || 'The enquiry could not be sent.') +
         ' Your enquiry has not been confirmed as received. Please try again later.');
@@ -305,7 +305,15 @@ if (form) {
       // The server uses the same schema and conditional rules to reject
       // missing required fields or values that are invalid for a branch.
       updateVisibility();
-      submit.disabled = false;
+      try {
+        const delivery=await fetch('/api/contact',{headers:{Accept:'application/json'},cache:'no-store'});
+        const status=await delivery.json();
+        submit.disabled=!(delivery.ok && status.submissionReady===true);
+        if (submit.disabled) announce('Email delivery is not configured yet. You can still review the questionnaire.','info');
+      } catch {
+        submit.disabled=true;
+        announce('Email delivery is temporarily unavailable. Please try again later.','info');
+      }
       form.addEventListener('change', updateVisibility);
       form.addEventListener('input', event => {
         if (event.target?.hasAttribute?.('aria-invalid')) event.target.removeAttribute('aria-invalid');

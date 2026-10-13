@@ -1,11 +1,20 @@
 /* Indonesia contact relay. This file contains no tokens from the supplied JSON. */
 import { readFileSync } from 'node:fs';
+import nodemailer from 'nodemailer';
 import { evaluateForm, collectAllowedAnswers } from '../contact-rules.mjs';
 
 const schema = JSON.parse(readFileSync(new URL('../contact-schema.json', import.meta.url), 'utf8'));
 const fields = schema.fields || [];
 const countries = fields.find(f => f.key === 'country')?.options || [];
 const LIMIT = 24000;
+
+function smtpReady() {
+  const keys=['SMTP_HOST','SMTP_PORT','SMTP_USER','SMTP_PASS','SMTP_FROM_EMAIL','CONTACT_TO_EMAIL'];
+  if (!keys.every(key => typeof process.env[key] === 'string' && process.env[key].trim())) return false;
+  if (![465,587].includes(Number(process.env.SMTP_PORT))) return false;
+  const validEmail = s => /^[^\s@,]+@[^\s@,]+\.[^\s@,]+$/.test(s.trim());
+  return validEmail(process.env.SMTP_FROM_EMAIL) && validEmail(process.env.CONTACT_TO_EMAIL);
+}
 
 function reply(res, status, data) {
   res.setHeader('Cache-Control', 'no-store');
@@ -50,7 +59,7 @@ function validate(field, value, allowed) {
 export default async function handler(req,res) {
   if (req.method === 'GET') return reply(res,200,{ok:true,formId:schema.id,
     fieldCount:fields.length,conditionCount:schema.conditions.length,
-    submissionReady:Boolean(process.env.CONTACT_SUBMIT_ENDPOINT && process.env.CONTACT_SUBMIT_HOST),
+    submissionReady:smtpReady(),
     updatedAt:schema.updatedAt});
   if (req.method !== 'POST') {
     res.setHeader('Allow','GET, POST');
@@ -85,37 +94,55 @@ export default async function handler(req,res) {
     if (error) return reply(res,400,{ok:false,error});
     if (!isEmpty(value)) submissionData.push({field:field.key,value});
   }
-  // No automatic routing to a previous provider. The site operator must
-  // explicitly configure a trusted, HTTPS receiving service and its exact host.
-  if (!process.env.CONTACT_SUBMIT_ENDPOINT || !process.env.CONTACT_SUBMIT_HOST) {
-    return reply(res,503,{ok:false,error:'Online enquiries are not configured yet.'});
+  if (!smtpReady()) {
+    return reply(res,503,{ok:false,error:'Email delivery is temporarily unavailable.'});
   }
-  let url;
+  const lines = [
+    'New Indonesia to Australia visa enquiry',
+    '',
+    ...submissionData.map(({field,value}) => {
+      const definition = fields.find(item => item.key === field);
+      const label = (definition?.label || field).replace(/[\r\n]/g,' ');
+      const answer = Array.isArray(value) ? value.join(', ') :
+        value === true ? 'Yes' : value === false ? 'No' : String(value);
+      return label + ': ' + answer;
+    }),
+    '',
+    'Privacy consent: Yes',
+    'Source: Indonesia to Australia enquiry form'
+  ];
+  const port = Number(process.env.SMTP_PORT);
+  const transporter = nodemailer.createTransport({
+    host:process.env.SMTP_HOST,
+    port,
+    secure:port===465,
+    requireTLS:port===587,
+    auth:{user:process.env.SMTP_USER,pass:process.env.SMTP_PASS},
+    tls:{minVersion:'TLSv1.2'},
+    connectionTimeout:10000,
+    greetingTimeout:10000,
+    socketTimeout:12000,
+    disableFileAccess:true,
+    disableUrlAccess:true
+  });
   try {
-    url = new URL(process.env.CONTACT_SUBMIT_ENDPOINT);
-    if (url.protocol !== 'https:' || url.hostname !== process.env.CONTACT_SUBMIT_HOST ||
-        url.username || url.password || url.port || url.hash) throw new Error('Invalid endpoint');
-  } catch { return reply(res,503,{ok:false,error:'The receiving service configuration is invalid.'}); }
-  const mode = process.env.CONTACT_SUBMIT_FORMAT || 'payload';
-  if (!['payload','convert'].includes(mode)) return reply(res,503,{ok:false,error:'Invalid submission format.'});
-  const payload = mode === 'payload'
-    ? { form:schema.id,submissionData }
-    : { formId:schema.id,data:Object.fromEntries(submissionData.map(item=>[item.field,item.value])) };
-  const controller = new AbortController();
-  const timeout = setTimeout(()=>controller.abort(),13000);
-  try {
-    const response = await fetch(url.toString(),{
-      method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify(payload),signal:controller.signal
+    const receipt = await transporter.sendMail({
+      from:{name:'Indonesia to Australia Enquiries',address:process.env.SMTP_FROM_EMAIL},
+      to:process.env.CONTACT_TO_EMAIL,
+      replyTo:String(answers.email).trim(),
+      subject:'New visa enquiry — Indonesia to Australia',
+      text:lines.join('\n')
     });
-    if (!response.ok) return reply(res,502,{ok:false,error:'The receiving service did not accept the enquiry. Please try again later.'});
-    const receipt = await response.json().catch(()=>null);
-    if (!receipt || receipt.errors || receipt.error || receipt.success===false ||
-      !(receipt.success===true || receipt.doc?.id || receipt.id)) {
-      return reply(res,502,{ok:false,error:'The receiving service did not confirm the enquiry. Please try again later.'});
+    // SMTP acceptance is handoff to the receiving mail server, not inbox delivery.
+    const recipient=process.env.CONTACT_TO_EMAIL.trim().toLowerCase();
+    const accepted=(receipt.accepted||[]).some(mail=>
+      String(mail).trim().toLowerCase()===recipient);
+    if (!accepted || !receipt.messageId) {
+      return reply(res,502,{ok:false,error:'Email acceptance could not be confirmed. Please try again later.'});
     }
     return reply(res,200,{ok:true});
   } catch {
-    return reply(res,502,{ok:false,error:'The receiving service could not be reached. Please try again later.'});
-  } finally { clearTimeout(timeout); }
+    // No raw SMTP errors, credentials, or submitted personal data in responses.
+    return reply(res,502,{ok:false,error:'Unable to send your enquiry right now. Please try again later.'});
+  }
 }
