@@ -4,8 +4,8 @@
 Editorial responsive site with Google Sans Flex, CSS visual treatment and GSAP progressive animations (reduced-motion friendly).
 
 ## Contact and Indonesia phone
-The form includes 46 non-file questions and 23 conditional rules from the user-supplied schema. Client and server both validate visible required fields; no attachments are requested or accepted.
-The Indonesian contact phone is +62 21 3000 2058 (click-to-call).
+The contact form has exactly five visitor fields: name, email address, phone number, country of residence, and optional additional notes. Privacy consent is a separate required checkbox; the anti-spam honeypot is hidden. Country options are supplied from the curated country list. Validation runs on the client and the server; no attachments are requested or accepted.
+The Indonesian contact phone is +62 21 3000 2058 (click-to-call). A WhatsApp (messages only) entry displays +65 8894 1773, linking to the user-specified https://wa.me/6581644824. These do not currently describe the same number, and confirmation should be requested before assuming the link destination is correct.
 
 ## Server-side SMTP setup (Vercel)
 Configure these values in Vercel Project → Settings → Environment Variables. Do not put passwords in GitHub or static website source:
@@ -26,4 +26,4 @@ Set CHATWOOT_WEBSITE_TOKEN in the same Vercel project environment (the Website I
 The widget loader fetches /api/chat-config and initializes the official Chatwoot SDK only when that token is configured. Nothing is displayed when the variable is absent. Redeploy after updating the token. Chat messages and service cookies are handled by the self-hosted Chatwoot instance. The privacy notice identifies the live chat integration.
 
 ## QA
-Test the click-to-call button, conditional branches, mobile form styling, form validation and correct error states; confirm credentials are not sent to browsers or committed to Git. After entering environment values, send a legitimate test enquiry and confirm the destination inbox receives it; check that the Chatwoot bubble appears and receives a test message.
+Test both contact links, all five inputs, the country dropdown, mobile form styling, form validation and correct error states; confirm credentials are not sent to browsers or committed to Git. After entering environment values, send a legitimate test enquiry and confirm the destination inbox receives it; check that the Chatwoot bubble appears and receives a test message.

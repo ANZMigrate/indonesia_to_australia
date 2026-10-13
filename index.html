@@ -243,59 +243,71 @@
         <div class="contact-heading">
           <div>
             <p class="eyebrow">Contact us</p>
-            <h2 id="contact-heading">Your next chapter starts with a conversation.</h2>
+            <h2 id="contact-heading">Have a question about moving to Australia?</h2>
           </div>
-          <p>Tell us about your migration goals and background. This questionnaire adapts to your destination, visa status and purpose, so you can describe the Australia or New Zealand pathways you are interested in.</p>
+          <p>Send us your contact details and a short message. We'll be in touch as soon as we can.</p>
         </div>
         <div class="contact-layout">
-          <aside class="contact-aside" aria-label="About this enquiry">
+          <aside class="contact-aside" aria-label="Contact information">
             <div class="contact-aside-top">
-              <span class="contact-overline">Indonesia to Australia</span>
-              <h3>Clear questions. A more focused enquiry.</h3>
-              <p>The questionnaire adjusts to your circumstances, so you can provide the most relevant details without unnecessary questions.</p>
+              <span class="contact-overline">Get in touch</span>
+              <h3>We're here to help.</h3>
+              <p>Prefer to contact us directly? Call the Indonesia office or send a WhatsApp message.</p>
             </div>
             <div class="contact-channel">
               <span>Indonesia phone</span>
               <a href="tel:+622130002058">+62 21 3000 2058</a>
             </div>
             <div class="contact-channel">
-              <span>01 / Destination</span>
-              <strong>Choose Australia or New Zealand</strong>
+              <span>WhatsApp (messages only)</span>
+              <a href="https://wa.me/6581644824" target="_blank" rel="noopener noreferrer" aria-label="Message us on WhatsApp at the provided link">+65 8894 1773</a>
             </div>
-            <div class="contact-channel">
-              <span>02 / Your circumstances</span>
-              <strong>Answer only the relevant follow-up questions</strong>
-            </div>
-            <div class="contact-channel">
-              <span>03 / Enquiry</span>
-              <strong>Submit when email delivery is configured</strong>
-            </div>
-            <p class="contact-aside-note">This form provides a structured enquiry, not an assessment of eligibility. Please do not enter passport numbers, financial account details or other highly sensitive information.</p>
+            <p class="contact-aside-note">We provide general information only. Please do not include passport numbers or other highly sensitive information in your message.</p>
           </aside>
-
           <div class="contact-form-panel">
             <div class="contact-form-top">
-              <span class="contact-form-step">Migration enquiry <span aria-hidden="true">/</span> Indonesia to Australia</span>
+              <span class="contact-form-step">Send an enquiry</span>
               <p>Fields marked <span aria-hidden="true">*</span> are required.</p>
             </div>
             <form id="visa-contact-form" class="visa-contact-form" action="/api/contact" method="post" novalidate>
               <div class="contact-honeypot" aria-hidden="true">
-                <label for="contact-company-web">Leave empty</label>
+                <label for="contact-company-web">Leave this field empty</label>
                 <input id="contact-company-web" name="companyWebsite" type="text" tabindex="-1" autocomplete="off">
               </div>
-              <div id="contact-dynamic-fields" class="form-grid" aria-busy="true">
-                <p class="form-loading">Loading the full Australia and New Zealand enquiry questionnaire…</p>
+              <div class="form-grid" id="contact-simple-fields">
+                <div class="form-field">
+                  <label for="contact-name">Name <span aria-hidden="true">*</span></label>
+                  <input id="contact-name" name="name" type="text" autocomplete="name" maxlength="150" placeholder="Your full name" required>
+                </div>
+                <div class="form-field">
+                  <label for="contact-email">Email <span aria-hidden="true">*</span></label>
+                  <input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required>
+                </div>
+                <div class="form-field">
+                  <label for="contact-phone">Phone number <span aria-hidden="true">*</span></label>
+                  <input id="contact-phone" name="phone" type="tel" autocomplete="tel" maxlength="32" placeholder="+62 812 3456 7890" required>
+                </div>
+                <div class="form-field">
+                  <label for="contact-country">Country of residence <span aria-hidden="true">*</span></label>
+                  <select id="contact-country" name="country" required disabled>
+                    <option value="">Loading countries…</option>
+                  </select>
+                </div>
+                <div class="form-field form-field-full">
+                  <label for="contact-additional-notes">Additional notes</label>
+                  <textarea id="contact-additional-notes" name="additionalNotes" rows="5" maxlength="2000" placeholder="How can we help? (optional)"></textarea>
+                </div>
               </div>
               <div class="form-field form-field-full contact-consent-wrap">
                 <label class="consent-field">
                   <input type="checkbox" id="contact-consent" name="consent" required>
-                  <span>I consent to this enquiry being emailed to the contact address configured for this website, and I have read the <a href="privacy/">privacy notice</a>. <span aria-hidden="true">*</span></span>
+                  <span>I consent to my enquiry being emailed to the contact address configured for this website, and I have read the <a href="privacy/">privacy notice</a>. <span aria-hidden="true">*</span></span>
                 </label>
               </div>
               <div id="contact-form-status" class="form-status" role="status" aria-live="polite" aria-atomic="true" hidden></div>
               <div class="form-submit">
-                <button class="button contact-submit" type="submit" disabled>Send details <span aria-hidden="true">↗</span></button>
-                <p>No document attachments are requested. Submissions are available when secure email delivery is configured.</p>
+                <button class="button contact-submit" type="submit" disabled>Send enquiry <span aria-hidden="true">↗</span></button>
+                <p>Your details will be sent securely by email once the contact service is configured.</p>
               </div>
             </form>
           </div>

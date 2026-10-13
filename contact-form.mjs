@@ -1,331 +1,138 @@
-import { evaluateForm } from './contact-rules.mjs';
+/* Simple, five-field Indonesia to Australia enquiry form. */
+(() => {
+  const form = document.getElementById('visa-contact-form');
+  if (!form) return;
 
-/* Indonesia to Australia — independent visa enquiry intake.
- * Field definitions, options and all enabled show/hide rules come from the
- * supplied (redacted) contact-schema.json. GSAP remains independent.
- */
-const form = document.getElementById('visa-contact-form');
-if (form) {
-  const mount = document.getElementById('contact-dynamic-fields');
-  const consent = document.getElementById('contact-consent');
-  const submit = form.querySelector('button[type="submit"]');
+  const send = form.querySelector('button[type="submit"]');
+  const country = document.getElementById('contact-country');
   const status = document.getElementById('contact-form-status');
-  const originalButton = submit.innerHTML;
-  let schema = null;
-  let state = { visible: {}, optionVisibility: {} };
+  const buttonContents = send.innerHTML;
   let sending = false;
+  let serviceReady = false;
 
-  const dialing = [
-    ['AU +61','+61'],['ID +62','+62'],['SG +65','+65'],['NZ +64','+64'],
-    ['MY +60','+60'],['HK +852','+852'],['VN +84','+84'],['IN +91','+91'],
-    ['TH +66','+66'],['PH +63','+63'],['UK +44','+44'],['US +1','+1']
-  ];
-  const make = (tag, cls = '', content = '') => {
-    const el = document.createElement(tag);
-    if (cls) el.className = cls;
-    if (content) el.textContent = content;
-    return el;
-  };
-  const announce = (message, kind='error') => {
+  const notice = (message, kind = 'error') => {
     status.hidden = false;
     status.dataset.state = kind;
     status.textContent = message;
   };
-  const clearNotice = () => { status.hidden = true; status.textContent = ''; };
-  const optional = (value) => value == null ? '' : String(value);
-
-  function buildField(field, countries) {
-    const key = field.key;
-    const type = field.type;
-    const id = 'intake-' + key;
-    const radioGroup = type === 'radio' || type === 'multi-select';
-    const shell = make(radioGroup ? 'fieldset' : 'div', 'form-field');
-    shell.dataset.key = key;
-    shell.dataset.width = field.width === '50' ? '50' : '100';
-    if (radioGroup) shell.classList.add('form-choice');
-    const title = make(radioGroup ? 'legend' : 'label', '', field.label);
-    if (!radioGroup && type !== 'checkbox') title.htmlFor = id;
-    if (field.required) {
-      const star = make('span', '', ' *');
-      star.setAttribute('aria-hidden','true');
-      title.append(star);
-    }
-
-    let options = field.options || [];
-    if (type === 'country' && !options.length) options = countries;
-    const selectWithOptions = (select, list) => {
-      select.append(new Option('Select an option', ''));
-      for (const item of list) select.append(new Option(item.label, item.value));
-    };
-    if (type === 'radio' || type === 'multi-select') {
-      shell.append(title);
-      const choices = make('div', type === 'radio' ? 'choice-row' : 'multi-options');
-      for (const item of options) {
-        const choice = make('label', type === 'radio' ? 'choice-pill' : 'form-checkbox-label');
-        const input = make('input');
-        input.type = type === 'radio' ? 'radio' : 'checkbox';
-        input.name = key;
-        input.value = item.value;
-        const span = make('span', '', item.label);
-        choice.append(input,span);
-        choices.append(choice);
-      }
-      shell.append(choices);
-    } else if (type === 'checkbox') {
-      const choice = make('label','form-checkbox-label');
-      const input = make('input');
-      input.type = 'checkbox'; input.name = key; input.value = 'Yes'; input.id = id;
-      const text = make('span', '', field.label);
-      if (field.required) text.append(make('span','', ' *'));
-      choice.append(input, text);
-      shell.append(choice);
-    } else {
-      shell.append(title);
-      let input;
-      if (type === 'select' || type === 'country') {
-        input = make('select');
-        selectWithOptions(input,options);
-      } else if (type === 'textarea') {
-        input = make('textarea');
-        input.rows = 5; input.maxLength = 1000;
-        input.placeholder = optional(field.placeholder || 'Tell us about your circumstances or questions.');
-      } else {
-        input = make('input');
-        input.type = ['email','date','number','tel'].includes(type) ? type : 'text';
-        if (field.placeholder) input.placeholder = field.placeholder;
-        if (type === 'date' && ['yourDateOfBirth','partnerDateOfBirth'].includes(key)) {
-          const today = new Date();
-          input.max = [today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
-        }
-        if (type === 'number') input.inputMode = 'numeric';
-        if (type === 'tel') input.inputMode = 'tel';
-        if (type === 'text' || type === 'email' || type === 'tel') input.maxLength = 250;
-      }
-      input.id = id;
-      input.name = key;
-      if (key === 'firstName') input.autocomplete = 'given-name';
-      if (key === 'lastName') input.autocomplete = 'family-name';
-      if (key === 'email') input.autocomplete = 'email';
-      if (key === 'country') input.autocomplete = 'country';
-      if (key === 'yourDateOfBirth') input.autocomplete = 'bday';
-      if (type === 'tel') {
-        const group = make('div','phone-group');
-        const dial = make('select');
-        dial.id = 'intake-dial-code'; dial.setAttribute('aria-label','International dialing code');
-        dialing.forEach(([label,value])=> dial.append(new Option(label,value)));
-        dial.value = '+61';
-        group.append(dial,input);
-        shell.append(group);
-      } else {
-        shell.append(input);
-      }
-    }
-    if (field.helpText) shell.append(make('span','field-hint',field.helpText));
-    return shell;
-  }
-
-  function selectedValues() {
-    const data = {};
-    if (!schema) return data;
-    schema.fields.forEach(field => {
-      const shell = mount.querySelector('[data-key="' + field.key + '"]');
-      if (!shell || shell.hidden) return;
-      const inputs = [...shell.querySelectorAll('input,select,textarea')].filter(el => !el.disabled && el.name === field.key);
-      if (field.type === 'radio') {
-        data[field.key] = inputs.find(input => input.checked)?.value || '';
-      } else if (field.type === 'multi-select') {
-        data[field.key] = inputs.filter(input => input.checked).map(input => input.value);
-      } else if (field.type === 'checkbox') {
-        data[field.key] = !!inputs[0]?.checked;
-      } else {
-        data[field.key] = inputs[0]?.value || '';
-      }
-    });
-    return data;
-  }
-
-  function updateVisibility() {
-    if (!schema) return;
-    // Cascading visibility is recalculated until a changed parent answer has
-    // hidden and cleared its downstream dependents.
-    for (let attempt = 0; attempt < 15; attempt++) {
-      state = evaluateForm(schema,selectedValues());
-      let changed = false;
-      schema.fields.forEach(field => {
-        const shell = mount.querySelector('[data-key="' + field.key + '"]');
-        if (!shell) return;
-        const show = state.visible[field.key] !== false;
-        const inputs = [...shell.querySelectorAll('input,select,textarea')];
-        if (shell.hidden === show) {
-          shell.hidden = !show;
-          changed = true;
-          if (!show) {
-            for (const input of inputs) {
-              if (input.type === 'checkbox' || input.type === 'radio') input.checked = false;
-              else input.value = '';
-            }
-          }
-        }
-        inputs.forEach(input => {
-          input.disabled = !show;
-          input.required = show && !!field.required && !['radio','checkbox','multi-select','file'].includes(field.type) && input.name === field.key;
-        });
-        const allowed = state.optionVisibility[field.key] || {};
-        shell.querySelectorAll('option, input[type="radio"], input[type="checkbox"]').forEach(control => {
-          if (control.name && control.name !== field.key) return;
-          if (!(control.value in allowed)) return;
-          const permitted = allowed[control.value] !== false;
-          control.disabled = !show || !permitted;
-          if (control.tagName === 'OPTION') {
-            control.hidden = !permitted;
-            if (!permitted && control.selected) {
-              control.parentElement.value = '';
-              changed = true;
-            }
-          } else {
-            if (control.parentElement) control.parentElement.hidden = !permitted;
-            if (!permitted && control.checked) {
-              control.checked = false; changed = true;
-            }
-          }
-        });
-      });
-      if (!changed) break;
-    }
-  }
-
-  function invalidField(field, value) {
-    if (field.required) {
-      const empty = Array.isArray(value) ? value.length === 0
-        : field.type === 'checkbox' ? !value : !String(value || '').trim();
-      if (empty) return 'This field is required.';
-    }
-    if (!value) return '';
-    if (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value))) {
-      return 'Enter a valid email address.';
-    }
-    if (['yourDateOfBirth','partnerDateOfBirth'].includes(field.key)) {
-      const date = new Date(String(value) + 'T00:00:00Z');
-      if (Number.isNaN(date.getTime()) || date.toISOString().slice(0,10) !== value ||
-          date > new Date() || Number(String(value).slice(0,4)) < 1900) return 'Enter a valid past date.';
-    }
-    if (['date','number'].includes(field.type) && !String(value).trim()) return '';
-    if (field.type === 'tel' && String(value).replace(/[^\d]/g,'').length < 6) return 'Enter a valid phone number.';
-    return '';
-  }
-
-  async function submitForm(event) {
-    event.preventDefault();
-    if (!schema || sending) return;
+  const dismiss = () => {
     status.hidden = true;
-    mount.querySelectorAll('[aria-invalid="true"]').forEach(el => el.removeAttribute('aria-invalid'));
-    updateVisibility();
-    const values = selectedValues();
-    for (const field of schema.fields) {
-      if (state.visible[field.key] === false) continue;
-      const issue = invalidField(field, values[field.key]);
-      if (issue) {
-        const shell = mount.querySelector('[data-key="' + field.key + '"]');
-        const control = shell.querySelector('input:not([type="hidden"]),select,textarea');
-        if (control) {
-          control.setAttribute('aria-invalid','true');
-          control.focus({ preventScroll: true });
-          control.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-        announce(field.label + ': ' + issue);
-        return;
-      }
+    status.textContent = '';
+  };
+
+  async function refreshSettings() {
+    const response = await fetch('/api/contact', {
+      headers: {Accept: 'application/json'},
+      cache: 'no-store'
+    });
+    if (!response.ok) throw new Error('The contact service is unavailable.');
+    const settings = await response.json();
+    if (!Array.isArray(settings.countries) || settings.countries.length < 50) {
+      throw new Error('The country list could not be loaded.');
     }
-    if (!consent.checked) {
-      consent.focus();
-      announce('Please read and agree to the privacy notice before sending.');
-      return;
-    }
-    const data = { ...values, consent:true,
-      companyWebsite: form.querySelector('[name="companyWebsite"]').value };
-    const phone = data.phone || '';
-    if (phone) data.phone = (document.getElementById('intake-dial-code').value + ' ' + phone).trim();
-    sending = true;
-    submit.disabled = true;
-    submit.textContent = 'Sending details…';
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(),25000);
-      let response;
-      try {
-        response = await fetch('/api/contact', {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
-          credentials:'same-origin',
-          body:JSON.stringify(data),
-          signal:controller.signal
-        });
-      } finally { clearTimeout(timeout); }
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || result.ok !== true) throw new Error(result.error || 'The receiving service did not confirm your submission.');
-      form.reset();
-      updateVisibility();
-      announce('Your enquiry has been accepted for email delivery.','success');
-    } catch (error) {
-      announce((error.name === 'AbortError' ? 'The request timed out.' : error.message || 'The enquiry could not be sent.') +
-        ' Your enquiry has not been confirmed as received. Please try again later.');
-    } finally {
-      sending = false;
-      // Never offer submission when no independent receiving service is configured.
-      try {
-        const readiness = await fetch('/api/contact', {headers:{Accept:'application/json'},cache:'no-store'});
-        const service = await readiness.json();
-        if (readiness.ok && service.submissionReady === true) {
-          submit.disabled = false;
-        } else {
-          submit.disabled = true;
-          announce('The questionnaire is available to review, but online submission is temporarily unavailable.','info');
-        }
-      } catch {
-        submit.disabled = true;
-        announce('Online submission is temporarily unavailable. Please try again later.','info');
-      }
-      submit.innerHTML = originalButton;
-    }
+    const options = [new Option('Select your country of residence', '')];
+    const countries = settings.countries
+      .filter(item => item && typeof item.label === 'string' &&
+        typeof item.value === 'string' && /^[A-Z]{2}$/.test(item.value))
+      .sort((a, b) => a.label.localeCompare(b.label, 'en'));
+    for (const item of countries) options.push(new Option(item.label, item.value));
+    const existing = country.value;
+    country.replaceChildren(...options);
+    country.disabled = false;
+    if (existing && countries.some(item => item.value === existing)) country.value = existing;
+    serviceReady = settings.submissionReady === true;
+    send.disabled = !serviceReady;
+    return serviceReady;
   }
 
   async function init() {
     try {
-      const response = await fetch('./contact-schema.json', { cache:'no-cache' });
-      if (!response.ok) throw new Error('Schema could not be loaded');
-      schema = await response.json();
-      if (schema.id !== 1 || !Array.isArray(schema.fields) || !Array.isArray(schema.conditions)) {
-        throw new Error('Incorrect form definition');
+      const ready = await refreshSettings();
+      if (!ready) {
+        notice('Online enquiry delivery is temporarily unavailable. You can contact us by phone or WhatsApp.', 'info');
       }
-      const countries = schema.fields.find(field => field.key === 'country')?.options || [];
-      const fragment = document.createDocumentFragment();
-      for (const field of schema.fields) fragment.append(buildField(field,countries));
-      mount.replaceChildren(fragment);
-      mount.setAttribute('aria-busy','false');
-      // The server uses the same schema and conditional rules to reject
-      // missing required fields or values that are invalid for a branch.
-      updateVisibility();
-      try {
-        const delivery=await fetch('/api/contact',{headers:{Accept:'application/json'},cache:'no-store'});
-        const status=await delivery.json();
-        submit.disabled=!(delivery.ok && status.submissionReady===true);
-        if (submit.disabled) announce('Email delivery is not configured yet. You can still review the questionnaire.','info');
-      } catch {
-        submit.disabled=true;
-        announce('Email delivery is temporarily unavailable. Please try again later.','info');
-      }
-      form.addEventListener('change', updateVisibility);
-      form.addEventListener('input', event => {
-        if (event.target?.hasAttribute?.('aria-invalid')) event.target.removeAttribute('aria-invalid');
-        if (['text','email','tel','textarea'].includes(event.target?.type)) return;
-        updateVisibility();
-      });
-      form.addEventListener('submit', submitForm);
     } catch {
-      mount.setAttribute('aria-busy','false');
-      mount.replaceChildren(make('p','form-loading','The questionnaire is temporarily unavailable. Please try again later.'));
-      announce('Unable to load the questionnaire. Please try again later.');
+      send.disabled = true;
+      country.disabled = true;
+      country.replaceChildren(new Option('Country list unavailable', ''));
+      notice('The contact form is temporarily unavailable. Please use the phone or WhatsApp contact options.', 'error');
     }
   }
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (sending || !serviceReady) return;
+    dismiss();
+
+    const phoneInput = document.getElementById('contact-phone');
+    const phone = phoneInput.value.trim();
+    if (!/^\+?[\d ()-]{6,32}$/.test(phone) ||
+        phone.replace(/\D/g, '').length < 6 ||
+        phone.replace(/\D/g, '').length > 16) {
+      phoneInput.setCustomValidity('Please enter a valid phone number, including the country code if applicable.');
+    } else {
+      phoneInput.setCustomValidity('');
+    }
+
+    if (!form.reportValidity()) return;
+    const payload = {
+      name: document.getElementById('contact-name').value.trim(),
+      email: document.getElementById('contact-email').value.trim(),
+      phone,
+      country: country.value,
+      additionalNotes: document.getElementById('contact-additional-notes').value.trim(),
+      consent: document.getElementById('contact-consent').checked,
+      companyWebsite: form.querySelector('[name="companyWebsite"]').value
+    };
+    sending = true;
+    send.disabled = true;
+    send.textContent = 'Sending enquiry…';
+
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 25000);
+      let response;
+      try {
+        response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json','Accept':'application/json'},
+          credentials: 'same-origin',
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+      } finally {
+        clearTimeout(timeout);
+      }
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result.ok !== true) {
+        throw new Error(result.error || 'The mail service did not confirm acceptance.');
+      }
+      form.reset();
+      phoneInput.setCustomValidity('');
+      notice('Thanks. Your enquiry was accepted for email delivery.', 'success');
+    } catch (error) {
+      notice(
+        (error.name === 'AbortError' ? 'The request timed out.' :
+          error.message || 'The enquiry could not be sent.') +
+        ' Please try again or contact us by phone or WhatsApp.',
+        'error'
+      );
+    } finally {
+      sending = false;
+      send.innerHTML = buttonContents;
+      // A delivery error should not be mistaken for a completed submission.
+      try {
+        await refreshSettings();
+      } catch {
+        serviceReady = false;
+        send.disabled = true;
+      }
+    }
+  });
+
+  document.getElementById('contact-phone').addEventListener('input', event => {
+    event.target.setCustomValidity('');
+  });
+
   init();
-}
+})();
