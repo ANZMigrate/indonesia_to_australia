@@ -140,7 +140,7 @@
       }
     });
     window.addEventListener('resize', () => {
-      if (window.innerWidth > 760 && nav.classList.contains('is-open')) {
+      if (window.innerWidth > 1150 && nav.classList.contains('is-open')) {
         nav.classList.remove('is-open');
         toggle.setAttribute('aria-expanded', 'false');
         toggle.textContent = 'Menu';
