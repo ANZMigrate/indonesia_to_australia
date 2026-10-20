@@ -9,8 +9,8 @@
 .page-about .about-hero-panel { position: relative; display: flex; flex-direction: column; min-height: 31rem; padding: clamp(1.5rem, 3vw, 2.5rem); overflow: hidden; border-radius: var(--radius-lg); background: var(--dark); color: #fff; }
 .page-about .about-hero-panel::after { position: absolute; right: -20%; bottom: 16%; width: 78%; aspect-ratio: 1; border: 1px solid rgba(255,255,255,.2); border-radius: 50%; content: ""; pointer-events: none; }
 .page-about .about-panel-top { display: flex; justify-content: space-between; gap: 1rem; color: var(--dark-muted); font-size: .66rem; font-weight: 760; letter-spacing: .09em; }
-.page-about .about-panel-monogram { margin: auto 0 .5rem; color: #fff; font-size: clamp(5rem, 10vw, 10rem); line-height: 1; font-weight: 780; letter-spacing: -.095em; }
-.page-about .about-panel-monogram span { color: var(--accent); }
+.page-about .about-panel-feature { margin: auto 0 .5rem; color: #fff; font-size: clamp(3.8rem, 7vw, 6.5rem); line-height: 1; font-weight: 780; letter-spacing: -.075em; }
+.page-about .about-panel-feature span { color: var(--accent); }
 .page-about .about-panel-rule { height: 1px; background: rgba(255,255,255,.28); }
 .page-about .about-panel-title { position: relative; z-index: 1; margin: 1.5rem 0; color: #fff; font-size: clamp(1.55rem, 2.7vw, 2.65rem); line-height: 1.12; font-weight: 660; letter-spacing: -.045em; }
 .page-about .about-panel-facts { display: grid; gap: .5rem; color: var(--dark-muted); font-size: .79rem; }
