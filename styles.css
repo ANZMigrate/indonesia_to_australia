@@ -789,3 +789,222 @@ p, li { overflow-wrap: break-word; }
   background: #eaf2fb;
   border-color: #c6d8e9;
 }
+
+
+/* ANZ Migrate typography baseline, adapted from the supplied typography guide.
+   Google Sans Flex is the existing font; keep the current static-site font setup.
+   The home and internal heroes use a dark surface, so their white text is retained. */
+:root {
+  --type-navy: #102568;
+  --type-navy-hover: #243966;
+  --type-heading: #111111;
+  --type-support: #222222;
+  --type-meta: #656565;
+}
+body {
+  font-family: "Google Sans Flex", system-ui, Arial, sans-serif;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.6;
+}
+body h1, body h2, body h3 {
+  font-family: inherit;
+  font-style: normal;
+  font-weight: 400;
+  text-wrap: balance;
+}
+body h1 {
+  max-width: 1000px;
+  font-size: clamp(44px, 5vw, 72px);
+  line-height: 1.08;
+  letter-spacing: -.035em;
+}
+body h2, body .contact-cta h2, body .contact-aside h3 {
+  font-size: 37.5px;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -.025em;
+}
+body h3,
+body .visa-card h3,
+body .route-card h3,
+body .content-panel h3,
+body .faq-list summary,
+body .process-item h3,
+body .conditional-panel h3 {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: normal;
+}
+body p, body li, body dt, body dd {
+  font-weight: 400;
+  letter-spacing: normal;
+}
+body .section-head > p, body .section-intro,
+body .hero-lede, body .page-hero p,
+body .contact-heading > p,
+body .contact-cta p:not(.eyebrow) {
+  font-size: 17.5px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: normal;
+}
+body .hero-lede { max-width: 560px; }
+body .hero h1, body .page-hero h1 {
+  max-width: 1000px;
+  font-size: clamp(44px, 5vw, 72px);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -.035em;
+  color: #ffffff;
+}
+body .page-hero > .container > p,
+body .page-hero .page-hero-grid > div > p:not(.page-kicker),
+body .hero-lede { color: #e0e7ed; }
+body .section-dark h2, body .section-dark h3,
+body .contact-cta h2, body .contact-aside h3 { color: #ffffff; }
+body .visa-card p, body .evidence-card p, body .review-card p,
+body .route-card p, body .content-panel p, body .process-item p,
+body .faq-answer p, body .contact-aside-top > p {
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+body .eyebrow, body .page-kicker, body .card-index,
+body .card-label, body .panel-label, body .visa-label,
+body .contact-overline, body .contact-form-step,
+body .visual-card-top, body .visual-label, body .signal-inner span {
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: normal;
+  text-transform: none;
+  font-weight: 400;
+}
+body .primary-nav a, body .site-name, body .footer-nav a {
+  letter-spacing: normal;
+}
+body .site-name { font-size: 18px; font-weight: 500; }
+body .primary-nav a { font-size: 15px; font-weight: 400; }
+body .button, body .text-link, body .nav-contact {
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.5;
+}
+body .text-link { color: var(--type-navy); }
+body .button {
+  border-radius: 999px;
+  color: #ffffff;
+  background: var(--type-navy);
+  border-color: var(--type-navy);
+  box-shadow: none;
+}
+body .button:hover {
+  color: #ffffff;
+  background: var(--type-navy-hover);
+  border-color: var(--type-navy-hover);
+}
+body .button-secondary {
+  background: transparent;
+  color: var(--type-navy);
+  border-color: var(--type-navy);
+}
+body .button-secondary:hover {
+  background: #e9edfa;
+  color: var(--type-navy);
+  border-color: var(--type-navy);
+}
+body .hero .button { background: #ffffff; border-color: #ffffff; color: var(--type-navy); }
+body .hero .button:hover { background: #e1e7f4; border-color: #e1e7f4; color: var(--type-navy); }
+body .hero .button-secondary { background: transparent; border-color: #ffffff; color: #ffffff; }
+body .hero .button-secondary:hover { background: rgba(255,255,255,.13); color: #ffffff; }
+body .contact-submit, body .contact-cta-action .button {
+  color: #ffffff;
+  background: var(--type-navy);
+  border-color: var(--type-navy);
+}
+body .contact-submit:hover, body .contact-cta-action .button:hover {
+  color: #ffffff;
+  background: var(--type-navy-hover);
+  border-color: var(--type-navy-hover);
+}
+/* Footer is a light surface with accessible dark type and plain text identity. */
+body .site-footer {
+  background: var(--page-bg);
+  color: var(--type-heading);
+  box-shadow: 0 -8px 28px -16px rgb(19 35 78 / .18);
+  border-top: 1px solid var(--line);
+}
+body .site-footer .site-name { color: var(--type-heading); font-size: 18px; font-weight: 500; }
+body .footer-brand p, body .footer-registration, body .footer-publisher {
+  color: var(--type-meta);
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+body .footer-brand .footer-publisher { color: var(--type-support); margin-top: 1rem; }
+body .footer-publisher a { color: var(--type-navy); font-weight: 500; }
+body .footer-nav a { color: var(--type-heading); font-size: 15px; font-weight: 400; }
+body .footer-nav a:hover { color: var(--type-navy); }
+body .footer-grid { border-bottom: 0; }
+body .footer-bottom {
+  border-top: 1px solid var(--line);
+  color: var(--type-meta);
+  font-size: 13px;
+  letter-spacing: normal;
+}
+body .footer-bottom span:first-child { color: var(--type-heading); font-weight: 400; }
+body .contact-aside-note, body .contact-cta-meta,
+body .field-hint, body .form-submit p { letter-spacing: normal; }
+body a:focus-visible, body button:focus-visible,
+body input:focus-visible, body select:focus-visible,
+body textarea:focus-visible {
+  outline: 3px solid #284b9d;
+  outline-offset: 3px;
+}
+/* At 15px per nav item, collapse earlier to avoid tablet-width collisions. */
+@media (max-width: 1150px) {
+  body .nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
+  body .primary-nav {
+    position: absolute;
+    top: calc(100% + .55rem);
+    right: 0;
+    left: 0;
+    display: none;
+    align-items: stretch;
+    gap: 0;
+    padding: .75rem;
+    border: 1px solid var(--line);
+    border-radius: 1.2rem;
+    background: #ffffff;
+    box-shadow: 0 20px 60px rgba(14,29,44,.18);
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
+  }
+  body .primary-nav.is-open { display: grid; }
+  body .primary-nav a { padding: .85rem .8rem; }
+  body .primary-nav .nav-contact { margin-top: .35rem; text-align: center; }
+}
+@media (max-width: 767px) {
+  body h1, body .hero h1, body .page-hero h1 {
+    font-size: 44px;
+    line-height: 1.12;
+    letter-spacing: -.025em;
+  }
+  body h2, body .contact-cta h2, body .contact-aside h3 {
+    font-size: 35px;
+    line-height: 1.25;
+    letter-spacing: -.025em;
+  }
+  body h3, body .visa-card h3, body .route-card h3,
+  body .content-panel h3, body .process-item h3 {
+    font-size: 17.5px;
+    line-height: 1.6;
+  }
+  body .hero-lede { max-width: 320px; font-size: 17.5px; }
+  body .page-hero p { font-size: 17.5px; }
+  body .footer-grid { grid-template-columns: 1fr; }
+}
